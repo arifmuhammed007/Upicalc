@@ -50,6 +50,3 @@ UPICalc is an **informational and educational tool only**.
 - It does **not** determine a specific merchant's exact MDR eligibility.
 - It is **not** affiliated with the NPCI, RBI, or any government body.
 - Calculations provided are illustrative estimates. Merchants should always consult their acquiring bank or payment aggregator for precise settlement terms.
-
----
-*Inspired by the educational resources available on UPITax.com.*
