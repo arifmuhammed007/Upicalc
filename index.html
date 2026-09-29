@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPICalc — Split UPI Payments Below ₹2,000 | MDR Calculator</title>
+  <meta name="description" content="Split UPI payments below ₹1,999 to stay under the ₹2,000 MDR threshold. Calculate potential merchant-side MDR, GST on MDR and payment splits instantly." />
+  <meta property="og:title" content="UPICalc — Split UPI Payments Below ₹2,000 | MDR Calculator" />
+  <meta property="og:description" content="Split UPI payments below ₹1,999 to stay under the ₹2,000 MDR threshold. Free calculator for merchants and customers." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_IN" />
+  <meta name="theme-color" content="#166534" />
+  <meta name="keywords" content="UPI split calculator, UPI MDR calculator, split payment below 2000, UPI charges calculator, UPI payment splitter, avoid UPI MDR" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --green-deep:#166534; --green-mid:#16a34a; --green-light:#f0fdf4;
+      --green-border:#bbf7d0; --bg:#f9fafb; --surface:#fff;
+      --text:#111827; --text-muted:#6b7280; --text-light:#9ca3af;
+      --border:#e5e7eb; --focus:#16a34a;
+      --orange-light:#fffbeb; --orange-border:#fde68a; --orange-text:#b45309;
+      --red-light:#fef2f2; --red-text:#dc2626;
+      --navy:#0f172a; --navy-fg:#e2e8f0;
+      --shadow-sm:0 1px 3px rgba(0,0,0,.06); --shadow-md:0 4px 16px rgba(0,0,0,.08);
+      --r-sm:8px; --r-md:12px; --r-lg:16px;
+      --tr:.18s ease; --max-w:1120px;
+      --font:'Inter',system-ui,-apple-system,sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+    img,svg{display:block;max-width:100%}
+    a{color:var(--green-deep);text-decoration:none}
+    a:hover{text-decoration:underline}
+    button{cursor:pointer;font-family:inherit}
+    ul{list-style:none}
+    .container{width:100%;max-width:var(--max-w);margin-inline:auto;padding-inline:16px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    :focus-visible{outline:2px solid var(--green-mid);outline-offset:2px}
+
+    /* ─── ANNOUNCEMENT BAR ───────────────────────────────────────── */
+    .announce-bar{background:var(--navy);color:var(--navy-fg);padding:10px 0;font-size:.82rem;border-bottom:1px solid rgba(255,255,255,.1)}
+    .announce-inner{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .announce-badge{background:var(--green-mid);color:#fff;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:999px;white-space:nowrap;flex-shrink:0}
+    .announce-text{color:var(--navy-fg);font-size:.8rem;line-height:1.4;opacity:.9}
+
+    /* ─── HEADER ─────────────────────────────────────────────────── */
+    .site-header{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
+    .header-inner{display:flex;align-items:center;justify-content:space-between;height:56px;gap:16px}
+    .logo{display:flex;align-items:center;gap:8px;font-size:1.2rem;font-weight:800;color:var(--green-deep);flex-shrink:0}
+    .logo-icon{width:32px;height:32px;background:var(--green-deep);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .logo-icon svg{color:#fff}
+    .site-nav{display:flex;align-items:center;gap:4px}
+    .site-nav a{font-size:.85rem;font-weight:500;color:var(--text-muted);padding:8px 12px;border-radius:var(--r-sm);transition:color var(--tr),background var(--tr)}
+    .site-nav a:hover{color:var(--green-deep);background:var(--green-light);text-decoration:none}
+    .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;background:none;border:none;padding:8px;border-radius:var(--r-sm)}
+    .hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:var(--tr)}
+    .hamburger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .hamburger[aria-expanded="true"] span:nth-child(2){opacity:0}
+    .hamburger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    .mobile-menu{display:none;position:absolute;top:56px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:8px 16px 16px;box-shadow:var(--shadow-md)}
+    .mobile-menu.open{display:block}
+    .mobile-menu a{display:block;font-size:1rem;font-weight:500;color:var(--text);padding:14px 12px;border-radius:var(--r-sm);border-bottom:1px solid var(--border)}
+    .mobile-menu a:last-child{border-bottom:none}
+    .mobile-menu a:hover{background:var(--green-light);color:var(--green-deep);text-decoration:none}
+
+    /* ─── HERO ───────────────────────────────────────────────────── */
+    .hero{background:linear-gradient(180deg,var(--green-light) 0%,var(--bg) 100%);border-bottom:1px solid var(--green-border);padding:44px 0 40px;text-align:center}
+    .hero-eyebrow{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green-deep);background:var(--green-border);padding:4px 14px;border-radius:999px;margin-bottom:16px}
+    .hero h1{font-size:clamp(1.6rem,5vw,2.8rem);font-weight:800;color:var(--text);line-height:1.15;margin-bottom:6px;letter-spacing:-.02em}
+    .hero h1 em{font-style:normal;color:var(--green-deep)}
+    .hero .hero-sub{font-size:clamp(1rem,3vw,1.25rem);color:var(--text-muted);max-width:560px;margin-inline:auto;line-height:1.5;margin-bottom:20px}
+    .hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--green-deep);color:#fff;font-size:1rem;font-weight:700;padding:14px 32px;border-radius:var(--r-md);border:none;transition:background var(--tr),transform var(--tr),box-shadow var(--tr)}
+    .hero-cta:hover{background:var(--green-mid);box-shadow:0 4px 16px rgba(22,101,52,.3);text-decoration:none;color:#fff}
+    .hero-cta:active{transform:scale(.97)}
+
+    /* ─── STATUS CARDS ────────────────────────────────────────────── */
+    .status-strip{padding:32px 0}
+    .status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .status-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 16px;border-top:4px solid var(--green-mid);text-align:center}
+    .status-card.warn{border-top-color:var(--orange-text)}
+    .status-card-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:6px}
+    .status-card-value{font-size:clamp(1.3rem,4vw,1.8rem);font-weight:800;letter-spacing:-.02em}
+    .status-card-value.free{color:var(--green-mid)}
+    .status-card-value.charge{color:var(--orange-text)}
+    .status-card-note{font-size:.7rem;color:var(--text-light);margin-top:4px;line-height:1.3}
+
+    /* ─── SECTION ────────────────────────────────────────────────── */
+    .section{padding:48px 0}
+    .section+.section{border-top:1px solid var(--border)}
+    .section-heading{font-size:clamp(1.15rem,3vw,1.5rem);font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-.01em}
+    .section-sub{font-size:.9rem;color:var(--text-muted);margin-bottom:24px;line-height:1.5}
+
+    /* ─── DATA TABLE ─────────────────────────────────────────────── */
+    .data-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r-md);border:1px solid var(--border);margin-bottom:20px}
+    .data-table{width:100%;border-collapse:collapse;text-align:left;font-size:.82rem;min-width:560px}
+    .data-table thead{background:var(--green-light)}
+    .data-table th{padding:12px 14px;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green-deep);white-space:nowrap;border-bottom:2px solid var(--green-border)}
+    .data-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:top}
+    .data-table tbody tr:hover{background:var(--green-light)}
+    .data-table .td-amount{font-weight:700;color:var(--text);white-space:nowrap}
+    .data-table .td-free{color:var(--green-mid);font-weight:700}
+    .data-table .td-charge{color:var(--orange-text);font-weight:700}
+    .data-table .td-cap{color:var(--orange-text);font-weight:700;font-style:italic}
+
+    /* ─── RULE CARDS ────────────────────────────────────────────── */
+    .rule-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px}
+    .rule-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:20px 18px;border-left:4px solid var(--green-mid)}
+    .rule-card.warn{border-left-color:var(--orange-text)}
+    .rule-card.info{border-left-color:#3b82f6}
+    .rule-card-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-light);margin-bottom:6px}
+    .rule-card-title{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.3}
+    .rule-card-body{font-size:.82rem;color:var(--text-muted);line-height:1.6}
+    .rule-card-body strong{color:var(--text)}
+
+    /* ─── TIMELINE ──────────────────────────────────────────────── */
+    .timeline{position:relative;padding-left:28px;margin-bottom:20px}
+    .timeline::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:2px;background:var(--green-border)}
+    .timeline-item{position:relative;padding-bottom:20px}
+    .timeline-item:last-child{padding-bottom:0}
+    .timeline-dot{position:absolute;left:-24px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--green-mid);border:2px solid var(--surface);box-shadow:0 0 0 2px var(--green-border)}
+    .timeline-item.active .timeline-dot{background:var(--orange-text);box-shadow:0 0 0 2px var(--orange-border)}
+    .timeline-date{font-size:.72rem;font-weight:700;color:var(--green-deep);text-transform:uppercase;letter-spacing:.04em}
+    .timeline-text{font-size:.85rem;color:var(--text-muted);line-height:1.5;margin-top:2px}
+
+    /* ─── SOURCE CARD ───────────────────────────────────────────── */
+    .source-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+    .source-card{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;transition:box-shadow var(--tr),border-color var(--tr)}
+    .source-card:hover{box-shadow:var(--shadow-md);border-color:var(--green-border);text-decoration:none}
+    .source-badge{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:700;color:var(--green-mid)}
+    .source-org{font-size:.72rem;color:var(--text-light);margin-left:8px}
+    .source-title{font-size:.88rem;font-weight:700;color:var(--text);margin-top:6px}
+    .source-desc{font-size:.78rem;color:var(--text-muted);margin-top:4px;line-height:1.4}
+
+    /* ─── INFO BOX ──────────────────────────────────────────────── */
+    .info-box{padding:16px 18px;border-radius:var(--r-md);font-size:.85rem;line-height:1.6;margin-bottom:16px}
+    .info-box.warning{background:var(--orange-light);border:1px solid var(--orange-border);color:var(--orange-text)}
+    .info-box.success{background:var(--green-light);border:1px solid var(--green-border);color:var(--green-deep)}
+    .info-box strong{font-weight:700}
+
+    /* ─── CALCULATOR CARD ────────────────────────────────────────── */
+    .calc-card{background:var(--surface);border:2px solid var(--green-border);border-radius:var(--r-lg);box-shadow:var(--shadow-md);padding:28px 24px;position:relative;overflow:hidden}
+    .calc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--green-deep)}
+    .card-title{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:4px}
+    .card-subtitle{font-size:.85rem;color:var(--text-muted);margin-bottom:22px;line-height:1.4}
+
+    .input-group{margin-bottom:16px}
+    .input-label{display:block;font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:8px}
+    .input-wrap{position:relative;display:flex;align-items:center}
+    .input-prefix{position:absolute;left:14px;font-size:1.3rem;font-weight:700;color:var(--green-deep);pointer-events:none;z-index:1}
+    .amount-input{width:100%;height:58px;padding:0 16px 0 40px;font-size:1.5rem;font-weight:700;font-family:var(--font);color:var(--text);background:var(--bg);border:2px solid var(--border);border-radius:var(--r-md);outline:none;transition:border-color var(--tr),box-shadow var(--tr);-webkit-appearance:none;appearance:none}
+    .amount-input:focus{border-color:var(--focus);box-shadow:0 0 0 3px rgba(22,163,74,.15);background:var(--surface)}
+    .amount-input.error{border-color:var(--red-text);box-shadow:0 0 0 3px rgba(220,38,38,.12)}
+    .input-error{font-size:.8rem;color:var(--red-text);margin-top:6px;display:none}
+    .input-error.visible{display:block}
+
+    .quick-select{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+    .quick-btn{height:44px;padding:0 14px;font-size:.875rem;font-weight:600;color:var(--green-deep);background:var(--green-light);border:1.5px solid var(--green-border);border-radius:var(--r-sm);transition:background var(--tr),border-color var(--tr),color var(--tr),transform var(--tr);white-space:nowrap;flex:1 1 auto;min-width:70px}
+    .quick-btn:hover,.quick-btn.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep)}
+    .quick-btn:active{transform:scale(.96)}
+
+    /* ─── SPLIT BOX (prominent) ──────────────────────────────────── */
+    .split-box{background:var(--green-light);border:2px solid var(--green-border);border-radius:var(--r-lg);padding:22px 20px;margin-bottom:22px}
+    .split-box-header{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+    .split-box-icon{width:36px;height:36px;background:var(--green-deep);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .split-box-title{font-size:1rem;font-weight:700;color:var(--green-deep)}
+    .split-box-desc{font-size:.82rem;color:var(--text-muted);margin-top:-4px}
+    .split-input-row{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+    .split-input-row .input-group{margin-bottom:0;flex:1 1 200px}
+    .split-quick{margin-top:10px;gap:6px}
+    .split-quick .quick-btn{height:38px;font-size:.8rem}
+    .split-hint{font-size:.73rem;color:var(--text-muted);margin-top:8px;line-height:1.4;padding:8px 10px;background:rgba(255,255,255,.7);border-radius:var(--r-sm);border-left:3px solid var(--green-deep)}
+    .split-max-warn{font-size:.78rem;color:var(--orange-text);background:var(--orange-light);border:1px solid var(--orange-border);padding:8px 12px;border-radius:var(--r-sm);margin-top:8px;display:none}
+    .split-max-warn.visible{display:block}
+
+    .btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:56px;background:var(--green-deep);color:#fff;font-size:1.05rem;font-weight:700;border:none;border-radius:var(--r-md);transition:background var(--tr),transform var(--tr),box-shadow var(--tr);letter-spacing:.01em}
+    .btn-primary:hover{background:var(--green-mid);box-shadow:0 4px 12px rgba(22,101,52,.25)}
+    .btn-primary:active{transform:scale(.98)}
+    .btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:44px;padding:0 18px;background:var(--surface);color:var(--green-deep);font-size:.875rem;font-weight:600;border:1.5px solid var(--green-border);border-radius:var(--r-sm);transition:background var(--tr),border-color var(--tr)}
+    .btn-secondary:hover{background:var(--green-light);border-color:var(--green-deep)}
+    .btn-secondary:active{transform:scale(.97)}
+    .btn-ghost{display:inline-flex;align-items:center;gap:5px;height:36px;padding:0 12px;background:none;color:var(--text-muted);font-size:.8rem;font-weight:500;border:1px solid var(--border);border-radius:var(--r-sm);transition:color var(--tr),background var(--tr)}
+    .btn-ghost:hover{color:var(--text);background:var(--bg)}
+
+    /* ─── SETTINGS ───────────────────────────────────────────────── */
+    .accordion{margin-top:16px;border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+    .accordion-trigger{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 16px;background:var(--surface);border:none;font-size:.85rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:background var(--tr);text-align:left}
+    .accordion-trigger:hover{background:var(--bg);color:var(--text)}
+    .accordion-trigger svg{flex-shrink:0;transition:transform var(--tr)}
+    .accordion-trigger[aria-expanded="true"] svg{transform:rotate(180deg)}
+    .accordion-body{display:none;padding:16px;background:var(--surface);border-top:1px solid var(--border)}
+    .accordion-body.open{display:block}
+    .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .settings-item label{display:block;font-size:.775rem;font-weight:600;color:var(--text-muted);margin-bottom:6px}
+    .small-input{width:100%;height:44px;padding:0 14px 0 36px;font-size:1rem;font-weight:600;font-family:var(--font);color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);outline:none;transition:border-color var(--tr),box-shadow var(--tr);-webkit-appearance:none;appearance:none}
+    .small-input:focus{border-color:var(--focus);box-shadow:0 0 0 3px rgba(22,163,74,.12);background:var(--surface)}
+    .small-input-prefix{position:absolute;left:12px;font-size:.95rem;font-weight:700;color:var(--green-deep);pointer-events:none;z-index:1}
+    .pct-suffix{position:absolute;right:12px;font-size:.85rem;font-weight:600;color:var(--text-muted);pointer-events:none}
+    .settings-note{font-size:.73rem;color:var(--text-light);margin-top:12px;line-height:1.4}
+
+    /* ─── RESULTS ────────────────────────────────────────────────── */
+    #results-area{display:none;margin-top:28px}
+    #results-area.visible{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .animate-in{animation:fadeIn .25s ease}
+
+    /* Comparison cards */
+    .compare-hero{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+    .scenario-card{border-radius:var(--r-lg);padding:22px 18px;border:2px solid var(--border);background:var(--surface);position:relative}
+    .scenario-card.single{border-color:var(--orange-border);background:var(--orange-light)}
+    .scenario-card.split{border-color:var(--green-border);background:var(--green-light)}
+    .scenario-badge{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+    .badge-warning{background:#fff;color:var(--orange-text);border:1px solid var(--orange-border)}
+    .badge-success{background:#fff;color:var(--green-deep);border:1px solid var(--green-border)}
+    .scenario-cost-label{font-size:.73rem;color:var(--text-muted);font-weight:500;margin-bottom:4px}
+    .scenario-cost{font-size:clamp(1.8rem,7vw,3rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:14px}
+    .scenario-card.single .scenario-cost{color:var(--orange-text)}
+    .scenario-card.split .scenario-cost{color:var(--green-deep)}
+    .scenario-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:.82rem;gap:6px}
+    .scenario-row-label{color:var(--text-muted)}
+    .scenario-row-value{font-weight:700;color:var(--text);text-align:right}
+
+    /* Savings callout */
+    .savings-callout{background:var(--green-light);border:2px solid var(--green-border);border-radius:var(--r-lg);padding:20px;text-align:center;margin-bottom:24px}
+    .savings-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px}
+    .savings-amount{font-size:clamp(1.6rem,6vw,2.4rem);font-weight:800;color:var(--green-deep);letter-spacing:-.03em}
+    .savings-sub{font-size:.82rem;color:var(--green-deep);font-weight:600;margin-top:4px}
+    .savings-note{font-size:.73rem;color:var(--text-muted);margin-top:8px;line-height:1.4}
+
+    /* Below threshold */
+    .below-threshold-card{background:var(--green-light);border:2px solid var(--green-border);border-radius:var(--r-lg);padding:24px;text-align:center;margin-bottom:20px}
+    .below-threshold-card .scenario-cost{color:var(--green-deep);margin-bottom:8px}
+    .below-threshold-note{font-size:.85rem;color:var(--text-muted);line-height:1.5}
+
+    /* Split breakdown */
+    .split-section-title{font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .split-summary{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+    .split-stat{flex:1 1 100px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;text-align:center}
+    .split-stat-value{font-size:clamp(1.1rem,4vw,1.4rem);font-weight:800;color:var(--green-deep);letter-spacing:-.02em}
+    .split-stat-label{font-size:.7rem;color:var(--text-muted);font-weight:500;margin-top:2px}
+    .split-list{border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;margin-bottom:16px}
+    .split-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-size:.9rem;border-bottom:1px solid var(--border);gap:8px}
+    .split-item:last-child{border-bottom:none}
+    .split-item:nth-child(even){background:var(--bg)}
+    .split-item:nth-child(odd){background:var(--surface)}
+    .split-num{font-size:.72rem;font-weight:700;color:var(--text-light);min-width:24px;font-variant-numeric:tabular-nums}
+    .split-amount{font-size:1rem;font-weight:700;color:var(--text);flex:1;text-align:right}
+    .split-item.split-last .split-amount{color:var(--text-muted)}
+    .split-total-row{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--green-light);border-top:2px solid var(--green-border);font-weight:700;font-size:.9rem}
+    .split-total-amount{font-size:1.1rem;font-weight:800;color:var(--green-deep)}
+
+    .share-bar{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center}
+    .copy-confirm{font-size:.78rem;color:var(--green-mid);font-weight:600;display:none}
+    .copy-confirm.visible{display:block}
+
+    .info-note{font-size:.78rem;color:var(--text-muted);background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;line-height:1.5;border-left:3px solid var(--green-border);margin-top:16px}
+
+    /* ─── FAQ ─────────────────────────────────────────────────────── */
+    .faq-item{border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);margin-bottom:8px;overflow:hidden}
+    .faq-item summary{padding:16px 18px;font-size:.9rem;font-weight:600;color:var(--text);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .faq-item summary::-webkit-details-marker{display:none}
+    .faq-item summary::after{content:'+';font-size:1.2rem;font-weight:700;color:var(--text-muted);flex-shrink:0;transition:transform var(--tr)}
+    .faq-item[open] summary::after{content:'−'}
+    .faq-item .faq-body{padding:0 18px 16px;font-size:.85rem;color:var(--text-muted);line-height:1.7}
+
+    /* ─── AUDIENCE ───────────────────────────────────────────────── */
+    .audience-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .audience-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:22px 20px}
+    .audience-icon{width:40px;height:40px;background:var(--green-light);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+    .audience-title{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:8px}
+    .audience-desc{font-size:.83rem;color:var(--text-muted);line-height:1.6}
+
+    /* ─── FOOTER ─────────────────────────────────────────────────── */
+    .site-footer{background:var(--navy);color:var(--navy-fg);padding:48px 0 32px;margin-top:48px}
+    .footer-top{display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;margin-bottom:32px}
+    .footer-brand .logo{font-size:1.1rem;margin-bottom:8px;color:var(--navy-fg)}
+    .footer-brand .logo .logo-icon{background:rgba(255,255,255,.15)}
+    .footer-brand p{font-size:.82rem;color:rgba(255,255,255,.6)}
+    .footer-links{display:flex;flex-wrap:wrap;gap:4px 16px;align-content:flex-start}
+    .footer-links a{font-size:.82rem;color:rgba(255,255,255,.6);padding:4px 0}
+    .footer-links a:hover{color:#fff}
+    .footer-disclaimer{font-size:.75rem;color:rgba(255,255,255,.45);line-height:1.6;border-top:1px solid rgba(255,255,255,.1);padding-top:20px}
+    .footer-disclaimer p{margin-bottom:8px}
+    .footer-disclaimer p:last-child{margin-bottom:0}
+    .footer-copy{margin-top:20px;font-size:.72rem;color:rgba(255,255,255,.35);text-align:center}
+
+    .tag{display:inline-block;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:2px 8px;border-radius:999px}
+
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+    @media(max-width:640px){
+      .container{padding-inline:14px}
+      .calc-card{padding:20px 16px}
+      .hamburger{display:flex}
+      .site-nav{display:none}
+      .hero{padding:28px 0 24px}
+      .settings-grid{grid-template-columns:1fr}
+      .compare-hero{grid-template-columns:1fr}
+      .audience-grid{grid-template-columns:1fr}
+      .section{padding:36px 0}
+      .status-grid{grid-template-columns:1fr}
+      .split-summary{gap:8px}
+      .split-stat{flex:1 1 80px}
+      .quick-btn{flex:1 1 calc(33.33% - 6px);min-width:60px}
+      .footer-top{flex-direction:column;gap:20px}
+      .scenario-card{padding:18px 14px}
+      .split-box{padding:18px 16px}
+    }
+    @media(max-width:360px){
+      .amount-input{font-size:1.2rem}
+      .scenario-cost{font-size:1.6rem}
+      .quick-btn{font-size:.78rem;padding:0 8px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── ANNOUNCEMENT BAR ────────────────────────────────────────── -->
+  <div class="announce-bar" role="banner">
+    <div class="container announce-inner">
+      <span class="announce-badge">Update</span>
+      <span class="announce-text">UPI P2M transactions above ₹2,000 can attract 0.4% MDR (max ₹300) from 15 Oct 2026. Split payments below ₹2,000 to stay within the free threshold.</span>
+    </div>
+  </div>
+
+  <!-- ─── HEADER ──────────────────────────────────────────────────── -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="#" class="logo" aria-label="UPICalc home">
+        <span class="logo-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
+        UPICalc
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#calculator">Split Calculator</a>
+        <a href="#mdr-guide">MDR Guide</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu" onclick="toggleMenu(this)"><span></span><span></span><span></span></button>
+    </div>
+    <nav id="mobile-menu" class="mobile-menu" aria-label="Mobile navigation">
+      <a href="#calculator" onclick="closeMobileMenu()">Split Calculator</a>
+      <a href="#mdr-guide" onclick="closeMobileMenu()">MDR Guide</a>
+      <a href="#how-it-works" onclick="closeMobileMenu()">How it works</a>
+      <a href="#faq" onclick="closeMobileMenu()">FAQ</a>
+    </nav>
+  </header>
+
+  <main id="main-content">
+
+    <!-- ─── HERO ──────────────────────────────────────────────────── -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <span class="hero-eyebrow">UPI PAYMENT SPLITTER</span>
+        <h1 id="hero-heading">Split UPI payments below <em>₹2,000</em><br>to stay within the free threshold.</h1>
+        <p class="hero-sub">Payments above ₹2,000 can attract MDR. Split them into ₹1,999 or less — each split may fall below the charge threshold.</p>
+        <a href="#calculator" class="hero-cta">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Split Your Payment Now
+        </a>
+      </div>
+    </section>
+
+    <!-- ─── STATUS STRIP ──────────────────────────────────────────── -->
+    <div class="status-strip">
+      <div class="container">
+        <div class="status-grid">
+          <div class="status-card">
+            <div class="status-card-label">P2P Transfers</div>
+            <div class="status-card-value free">FREE</div>
+            <div class="status-card-note">Any amount · No charges</div>
+          </div>
+          <div class="status-card">
+            <div class="status-card-label">P2M ≤ ₹2,000</div>
+            <div class="status-card-value free">FREE</div>
+            <div class="status-card-note">No MDR below threshold</div>
+          </div>
+          <div class="status-card warn">
+            <div class="status-card-label">P2M > ₹2,000</div>
+            <div class="status-card-value charge">0.4% MDR</div>
+            <div class="status-card-note">Max ₹300 · From 15 Oct 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── CALCULATOR ────────────────────────────────────────────── -->
+    <section class="section" id="calculator" aria-labelledby="calc-heading">
+      <div class="container">
+
+        <div class="calc-card">
+          <h2 class="card-title" id="calc-heading">Split your UPI payment</h2>
+          <p class="card-subtitle">Enter the total amount and we'll split it into payments below the MDR threshold — each payment stays under ₹2,000 so no charges apply.</p>
+
+          <!-- Amount -->
+          <div class="input-group">
+            <label class="input-label" for="payment-amount">Total payment amount</label>
+            <div class="input-wrap">
+              <span class="input-prefix" aria-hidden="true">₹</span>
+              <input type="number" id="payment-amount" class="amount-input" placeholder="10000" min="0" step="0.01" inputmode="decimal" autocomplete="off" aria-describedby="amount-error" />
+            </div>
+            <p id="amount-error" class="input-error" role="alert" aria-live="polite"></p>
+          </div>
+
+          <!-- Quick-select amounts -->
+          <div class="quick-select" role="group" aria-label="Quick amount selection">
+            <button class="quick-btn" type="button" onclick="setAmount(2000)">₹2,000</button>
+            <button class="quick-btn" type="button" onclick="setAmount(5000)">₹5,000</button>
+            <button class="quick-btn" type="button" onclick="setAmount(10000)">₹10,000</button>
+            <button class="quick-btn" type="button" onclick="setAmount(25000)">₹25,000</button>
+            <button class="quick-btn" type="button" onclick="setAmount(50000)">₹50,000</button>
+          </div>
+
+          <!-- ─── SPLIT AMOUNT (hero feature) ─────────────────────── -->
+          <div class="split-box">
+            <div class="split-box-header">
+              <span class="split-box-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </span>
+              <div>
+                <div class="split-box-title">Split each payment to</div>
+                <div class="split-box-desc">Keep below ₹2,000 to stay within the free threshold</div>
+              </div>
+            </div>
+            <div class="input-group" style="margin-bottom:8px;">
+              <label class="input-label" for="max-payment">Maximum per split payment (max ₹1,999)</label>
+              <div class="input-wrap">
+                <span class="input-prefix" aria-hidden="true">₹</span>
+                <input type="number" id="max-payment" class="amount-input" value="1999" min="1" max="1999" step="1" inputmode="decimal" autocomplete="off" aria-describedby="max-payment-error" />
+              </div>
+              <p id="max-payment-error" class="input-error" role="alert" aria-live="polite"></p>
+            </div>
+            <div class="quick-select split-quick" role="group" aria-label="Quick split amount selection">
+              <button class="quick-btn" type="button" onclick="setSplitAmount(500)">₹500</button>
+              <button class="quick-btn" type="button" onclick="setSplitAmount(999)">₹999</button>
+              <button class="quick-btn" type="button" onclick="setSplitAmount(1499)">₹1,499</button>
+              <button class="quick-btn active" type="button" onclick="setSplitAmount(1999)">₹1,999</button>
+            </div>
+            <p class="split-hint">
+              Default ₹1,999 — one rupee below the ₹2,000 MDR threshold. You can lower this to split into even smaller amounts, but cannot exceed ₹1,999.
+            </p>
+          </div>
+
+          <!-- Calculate -->
+          <button class="btn-primary" type="button" onclick="calculate()" aria-label="Split payment and calculate MDR">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Split Payment &amp; Calculate
+          </button>
+
+          <!-- Settings -->
+          <div class="accordion">
+            <button class="accordion-trigger" type="button" aria-expanded="false" aria-controls="settings-body" onclick="toggleAccordion(this,'settings-body')">
+              <span>⚙ Advanced MDR settings</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="settings-body" class="accordion-body" role="region" aria-label="MDR settings">
+              <div class="settings-grid">
+                <div class="settings-item"><label for="mdr-rate">MDR rate</label><div class="input-wrap"><input type="number" id="mdr-rate" class="small-input" value="0.4" min="0" max="100" step="0.01" inputmode="decimal" style="padding-left:14px;padding-right:32px" /><span class="pct-suffix">%</span></div></div>
+                <div class="settings-item"><label for="mdr-threshold">Threshold</label><div class="input-wrap"><span class="small-input-prefix" aria-hidden="true">₹</span><input type="number" id="mdr-threshold" class="small-input" value="2000" min="0" step="1" inputmode="decimal" /></div></div>
+                <div class="settings-item"><label for="mdr-cap">MDR cap</label><div class="input-wrap"><span class="small-input-prefix" aria-hidden="true">₹</span><input type="number" id="mdr-cap" class="small-input" value="300" min="0" step="1" inputmode="decimal" /></div></div>
+                <div class="settings-item"><label for="gst-rate">GST on MDR</label><div class="input-wrap"><input type="number" id="gst-rate" class="small-input" value="18" min="0" max="100" step="0.01" inputmode="decimal" style="padding-left:14px;padding-right:32px" /><span class="pct-suffix">%</span></div></div>
+              </div>
+              <p class="settings-note">Default values reflect the announced UPI P2M pricing framework. Adjust to model different scenarios.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ━━━ RESULTS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+        <div id="results-area" aria-live="polite" aria-label="Calculation results">
+
+          <!-- Below threshold -->
+          <div id="below-threshold" class="below-threshold-card" style="display:none">
+            <div class="scenario-cost" id="bt-amount">₹0</div>
+            <p class="below-threshold-note" id="bt-note">✓ This amount is already at or below the ₹2,000 threshold — no MDR applies, no split needed!</p>
+          </div>
+
+          <!-- Comparison -->
+          <div id="comparison-section" style="display:none">
+            <div class="compare-hero">
+              <div class="scenario-card single">
+                <div class="scenario-badge badge-warning">⚠ MDR Applies</div>
+                <p class="scenario-cost-label">Without splitting — estimated merchant cost</p>
+                <div class="scenario-cost" id="single-cost">₹47.20</div>
+                <div class="scenario-row"><span class="scenario-row-label">Payment</span><span class="scenario-row-value" id="single-amount">₹10,000</span></div>
+                <div class="scenario-row"><span class="scenario-row-label">MDR (0.4%)</span><span class="scenario-row-value" id="single-mdr">₹40</span></div>
+                <div class="scenario-row"><span class="scenario-row-label">GST on MDR</span><span class="scenario-row-value" id="single-gst">₹7.20</span></div>
+              </div>
+              <div class="scenario-card split">
+                <div class="scenario-badge badge-success">✓ Below ₹2,000</div>
+                <p class="scenario-cost-label">With splitting — each payment under threshold</p>
+                <div class="scenario-cost" id="split-cost">₹0</div>
+                <div class="scenario-row"><span class="scenario-row-label">Total</span><span class="scenario-row-value" id="split-total-val">₹10,000</span></div>
+                <div class="scenario-row"><span class="scenario-row-label">Payments</span><span class="scenario-row-value" id="split-count-val">6</span></div>
+                <div class="scenario-row"><span class="scenario-row-label">Per payment MDR</span><span class="scenario-row-value" id="split-each-mdr">₹0</span></div>
+              </div>
+            </div>
+
+            <div class="savings-callout" id="savings-callout">
+              <p class="savings-label">Potential estimated difference by splitting</p>
+              <p class="savings-amount" id="savings-amount">₹47.20</p>
+              <p class="savings-sub" id="savings-sub">Each payment stays below ₹2,000 — within the free threshold</p>
+              <p class="savings-note">Actual MDR treatment depends on the applicable UPI framework, merchant category and payment provider. This is an illustrative estimate.</p>
+            </div>
+          </div>
+
+          <!-- Split breakdown -->
+          <div id="split-breakdown" style="display:none">
+            <h3 class="split-section-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-deep)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Payment split breakdown
+            </h3>
+            <div class="split-summary" role="group" aria-label="Split summary">
+              <div class="split-stat"><div class="split-stat-value" id="sr-total">—</div><div class="split-stat-label">Total</div></div>
+              <div class="split-stat"><div class="split-stat-value" id="sr-max">—</div><div class="split-stat-label">Max per payment</div></div>
+              <div class="split-stat"><div class="split-stat-value" id="sr-count">—</div><div class="split-stat-label">Payments</div></div>
+            </div>
+            <div class="split-list" id="split-list" role="list" aria-label="Individual payments"></div>
+
+            <div class="share-bar">
+              <button class="btn-secondary" type="button" onclick="copyResult()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy result</button>
+              <button class="btn-secondary" type="button" onclick="shareResult()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
+              <span class="copy-confirm" id="copy-confirm" role="status" aria-live="polite">✓ Copied!</span>
+            </div>
+
+            <p class="info-note"><strong>Note:</strong> Actual MDR treatment of multiple transactions depends on the applicable UPI framework, merchant category and payment provider. This is an illustrative calculation based on configured assumptions.</p>
+
+            <div style="margin-top:14px;text-align:right">
+              <button class="btn-ghost" type="button" onclick="resetCalculator()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reset</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ─── HOW IT WORKS ──────────────────────────────────────────── -->
+    <section class="section" id="how-it-works" aria-labelledby="why-heading">
+      <div class="container">
+        <h2 class="section-heading" id="why-heading">How does splitting help?</h2>
+        <p class="section-sub">Understanding UPI MDR and why splitting payments makes a difference.</p>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px 24px;">
+          <p style="font-size:.92rem;color:var(--text-muted);line-height:1.7;margin-bottom:14px">
+            Under the announced UPI pricing framework, <strong style="color:var(--text)">merchant payments (P2M) above ₹2,000</strong> can attract MDR of 0.4% (capped at ₹300). Payments at or below ₹2,000 remain free of MDR.
+          </p>
+          <p style="font-size:.92rem;color:var(--text-muted);line-height:1.7;margin-bottom:14px">
+            <strong style="color:var(--green-deep)">By splitting a larger payment into amounts of ₹1,999 or less, each individual transaction falls below the ₹2,000 threshold</strong> — meaning MDR may not apply to any of the split payments. For example, ₹10,000 split into 5 payments of ₹1,999 + 1 payment of ₹5 could potentially save ₹47.20 in MDR + GST compared to a single ₹10,000 payment.
+          </p>
+          <p style="font-size:.92rem;color:var(--text-muted);line-height:1.7;margin-bottom:14px">
+            MDR (Merchant Discount Rate) is a payment processing charge — <strong style="color:var(--text)">not a government tax</strong>. It is paid by the merchant, not the customer. GST at 18% is additionally applicable on the MDR amount.
+          </p>
+          <p style="font-size:.82rem;color:var(--text-light);border-top:1px solid var(--border);margin-top:16px;padding-top:14px;line-height:1.5">
+            UPICalc does not process payments and does not determine MDR eligibility. This tool provides estimates for informational and educational purposes only.
+          </p>
+        </div>
+
+        <div class="audience-grid" style="margin-top:24px">
+          <div class="audience-card">
+            <div class="audience-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green-deep)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+            <h3 class="audience-title">For Customers</h3>
+            <p class="audience-desc">Paying a merchant above ₹2,000? Split the payment into ₹1,999 chunks — each payment stays below the MDR threshold. The merchant receives the same total without additional charges.</p>
+          </div>
+          <div class="audience-card">
+            <div class="audience-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green-deep)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+            <h3 class="audience-title">For Merchants</h3>
+            <p class="audience-desc">Request customers to split larger payments below ₹2,000. This way each transaction may stay under the MDR threshold, potentially reducing settlement deductions on your end.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── MDR REFERENCE GUIDE ───────────────────────────────────── -->
+    <section class="section" id="mdr-guide" aria-labelledby="mdr-heading">
+      <div class="container">
+        <h2 class="section-heading" id="mdr-heading">UPI MDR reference guide</h2>
+        <p class="section-sub">A complete look at UPI merchant charges, thresholds, exemptions and the timeline — so you know exactly what applies and what doesn't.</p>
+
+        <div class="info-box warning">
+          <strong>Important:</strong> MDR is a merchant/payment ecosystem charge — it is <strong>not</strong> a government tax. The term "UPI Tax" circulating in public discussion is a misnomer. Customers are never charged MDR directly.
+        </div>
+
+        <!-- MDR Reference Table -->
+        <h3 style="font-size:.95rem;font-weight:700;margin-bottom:12px;color:var(--text)">MDR cost by transaction amount (standard retail)</h3>
+        <div class="data-table-wrap">
+          <table class="data-table" aria-label="MDR reference table">
+            <thead>
+              <tr>
+                <th>Transaction</th>
+                <th>MDR (0.4%)</th>
+                <th>GST (18%)</th>
+                <th>Total cost</th>
+                <th>Merchant receives</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="td-amount">₹1,999</td><td class="td-free">₹0</td><td class="td-free">₹0</td><td class="td-free">₹0</td><td>₹1,999.00</td></tr>
+              <tr><td class="td-amount">₹2,000</td><td class="td-free">₹0</td><td class="td-free">₹0</td><td class="td-free">₹0</td><td>₹2,000.00</td></tr>
+              <tr><td class="td-amount">₹2,500</td><td class="td-charge">₹10.00</td><td>₹1.80</td><td class="td-charge">₹11.80</td><td>₹2,488.20</td></tr>
+              <tr><td class="td-amount">₹3,000</td><td class="td-charge">₹12.00</td><td>₹2.16</td><td class="td-charge">₹14.16</td><td>₹2,985.84</td></tr>
+              <tr><td class="td-amount">₹5,000</td><td class="td-charge">₹20.00</td><td>₹3.60</td><td class="td-charge">₹23.60</td><td>₹4,976.40</td></tr>
+              <tr><td class="td-amount">₹10,000</td><td class="td-charge">₹40.00</td><td>₹7.20</td><td class="td-charge">₹47.20</td><td>₹9,952.80</td></tr>
+              <tr><td class="td-amount">₹25,000</td><td class="td-charge">₹100.00</td><td>₹18.00</td><td class="td-charge">₹118.00</td><td>₹24,882.00</td></tr>
+              <tr><td class="td-amount">₹50,000</td><td class="td-charge">₹200.00</td><td>₹36.00</td><td class="td-charge">₹236.00</td><td>₹49,764.00</td></tr>
+              <tr><td class="td-amount">₹75,000</td><td class="td-cap">₹300.00 (cap)</td><td>₹54.00</td><td class="td-cap">₹354.00</td><td>₹74,646.00</td></tr>
+              <tr><td class="td-amount">₹1,00,000</td><td class="td-cap">₹300.00 (cap)</td><td>₹54.00</td><td class="td-cap">₹354.00</td><td>₹99,646.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:.78rem;color:var(--text-light);margin-bottom:28px;line-height:1.4">MDR cap of ₹300 is reached at ₹75,000 (₹75,000 × 0.4% = ₹300). All transactions of ₹75,000 and above incur a flat ₹300 MDR + ₹54 GST = ₹354 total.</p>
+
+        <!-- MDR by category -->
+        <h3 style="font-size:.95rem;font-weight:700;margin-bottom:12px;color:var(--text)">MDR rates by merchant category</h3>
+        <div class="data-table-wrap">
+          <table class="data-table" aria-label="MDR by merchant category">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>MDR rate</th>
+                <th>Cap</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="td-amount">Standard retail / E-commerce</td><td class="td-charge">0.40%</td><td>₹300</td><td>Most merchant transactions above ₹2,000</td></tr>
+              <tr><td class="td-amount">Small merchants (≤₹1L/month)</td><td class="td-free">0% (Free)</td><td>—</td><td>Protected under zero-MDR framework</td></tr>
+              <tr><td class="td-amount">Railways / IRCTC</td><td>Flat ₹5.00</td><td>₹5</td><td>Thin-margin / essential sector</td></tr>
+              <tr><td class="td-amount">Fuel / Petrol pumps</td><td>Flat ₹5.00</td><td>₹5</td><td>Thin-margin / essential sector</td></tr>
+              <tr><td class="td-amount">Telecom &amp; Utilities</td><td>Flat ₹5.00</td><td>₹5</td><td>Thin-margin / essential sector</td></tr>
+              <tr><td class="td-amount">Insurance</td><td>Flat ₹5.00</td><td>₹5</td><td>Thin-margin / essential sector</td></tr>
+              <tr><td class="td-amount">Agriculture inputs</td><td>Flat ₹5.00</td><td>₹5</td><td>Thin-margin / essential sector</td></tr>
+              <tr><td class="td-amount">Capital markets / Broking</td><td>0.02%</td><td>₹300</td><td>Mutual funds, stockbroking, securities</td></tr>
+              <tr><td class="td-amount">P2P transfers</td><td class="td-free">0% (Free)</td><td>—</td><td>Always free, any amount</td></tr>
+              <tr><td class="td-amount">UPI AutoPay / e-Mandate</td><td class="td-free">0% (Free)</td><td>—</td><td>Explicitly excluded from 0.4% MDR</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Rules cards -->
+        <h3 style="font-size:.95rem;font-weight:700;margin:28px 0 14px;color:var(--text)">Key rules at a glance</h3>
+        <div class="rule-grid">
+          <div class="rule-card">
+            <div class="rule-card-label">Who pays MDR?</div>
+            <div class="rule-card-title">The merchant — never the customer</div>
+            <div class="rule-card-body">MDR is deducted from the merchant's settlement amount. <strong>Customers always pay the exact invoice amount</strong> — the government mandates that UPI users cannot be charged MDR or checkout surcharges.</div>
+          </div>
+          <div class="rule-card warn">
+            <div class="rule-card-label">Merchant settlement</div>
+            <div class="rule-card-title">Net settlement = Amount − MDR − GST</div>
+            <div class="rule-card-body">For a ₹10,000 payment: MDR ₹40 + GST ₹7.20 = <strong>₹47.20 deducted</strong>. Merchant receives ₹9,952.80. GST-registered merchants can claim input tax credit on the 18% GST.</div>
+          </div>
+          <div class="rule-card info">
+            <div class="rule-card-label">Small merchants protected</div>
+            <div class="rule-card-title">₹0 MDR if turnover ≤ ₹1 lakh/month</div>
+            <div class="rule-card-body">Merchants collecting up to ₹1,00,000/month via static or dynamic QR codes retain <strong>full zero-MDR protection</strong>. Eligibility is determined by the acquiring bank, not by transaction size.</div>
+          </div>
+          <div class="rule-card">
+            <div class="rule-card-label">MDR ecosystem</div>
+            <div class="rule-card-title">How the 0.4% MDR is shared</div>
+            <div class="rule-card-body">The MDR fee is distributed among: <strong>Issuing bank (~40%)</strong> for account maintenance &amp; authorization, <strong>Acquiring bank (~30%)</strong> for merchant onboarding &amp; settlement, and <strong>UPI app/PSP (~30%)</strong> for app infrastructure &amp; security. NPCI receives nominal switching fees.</div>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <h3 style="font-size:.95rem;font-weight:700;margin:28px 0 14px;color:var(--text)">Timeline</h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-date">2020 — Ongoing</div>
+            <div class="timeline-text">Zero-MDR framework under Section 10A of the PSSA 2007 — all UPI transactions free of MDR.</div>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-date">2026 — Legislative amendment</div>
+            <div class="timeline-text">Taxation and Other Laws (Amendment) Act, 2026 amended Section 10A of PSSA 2007, enabling targeted MDR through executive notification.</div>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-date">14 September 2026</div>
+            <div class="timeline-text">Ministry of Finance (DFS) notification published — revised MDR framework specifying 0.4% rate, ₹2,000 threshold, ₹300 cap.</div>
+          </div>
+          <div class="timeline-item active">
+            <span class="timeline-dot"></span>
+            <div class="timeline-date">15 October 2026 — Go-live</div>
+            <div class="timeline-text">Formal nationwide implementation of 0.4% MDR on specified P2M transactions above ₹2,000. P2P and small merchants remain exempt.</div>
+          </div>
+        </div>
+
+        <!-- UPI Transaction Limits -->
+        <h3 style="font-size:.95rem;font-weight:700;margin:28px 0 14px;color:var(--text)">UPI transaction limits (2026)</h3>
+        <div class="data-table-wrap">
+          <table class="data-table" aria-label="UPI transaction limits">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Per transaction</th>
+                <th>Daily limit</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="td-amount">Standard UPI</td><td>₹1,00,000</td><td>₹1,00,000</td><td>Subject to individual bank limits</td></tr>
+              <tr><td class="td-amount">Hospital / Medical</td><td>₹5,00,000</td><td>—</td><td>Enhanced limit for verified categories</td></tr>
+              <tr><td class="td-amount">Education fees</td><td>₹5,00,000</td><td>—</td><td>School, college, university fees</td></tr>
+              <tr><td class="td-amount">Tax payments</td><td>₹5,00,000</td><td>—</td><td>Income tax, GST payments</td></tr>
+              <tr><td class="td-amount">IPO / RBI Retail Direct</td><td>₹5,00,000</td><td>—</td><td>Investments and gilt accounts</td></tr>
+              <tr><td class="td-amount">UPI Lite</td><td>₹1,000</td><td>₹10,000</td><td>Max balance ₹5,000; does not count against main limit</td></tr>
+              <tr><td class="td-amount">UPI Lite X (offline)</td><td>₹500</td><td>₹10,000</td><td>Near-field communication offline payments</td></tr>
+              <tr><td class="td-amount">New device / new account</td><td>₹5,000</td><td>—</td><td>First 24 hours after linking</td></tr>
+              <tr><td class="td-amount">UPI Circle (delegated)</td><td>₹5,000</td><td>—</td><td>Max ₹15,000/month per delegation</td></tr>
+              <tr><td class="td-amount">AutoPay (e-Mandate)</td><td>₹15,000</td><td>—</td><td>₹1,00,000 for MF SIPs, insurance, credit card bills</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Practical considerations -->
+        <h3 style="font-size:.95rem;font-weight:700;margin:28px 0 14px;color:var(--text)">Practical considerations for splitting</h3>
+        <div class="rule-grid">
+          <div class="rule-card warn">
+            <div class="rule-card-label">Bank limits</div>
+            <div class="rule-card-title">Daily transaction count caps</div>
+            <div class="rule-card-body">Most banks allow 20–50 UPI transactions per day. Splitting a ₹50,000 bill into 26 transactions may hit your daily limit or <strong>trigger anti-fraud locks</strong>. Check your bank's policy.</div>
+          </div>
+          <div class="rule-card info">
+            <div class="rule-card-label">Multiple PINs</div>
+            <div class="rule-card-title">Each split requires UPI PIN entry</div>
+            <div class="rule-card-body">Every individual payment requires entering your UPI PIN. <strong>Splitting adds time and friction</strong> — consider whether the MDR savings justify the extra steps for smaller amounts.</div>
+          </div>
+          <div class="rule-card">
+            <div class="rule-card-label">GST credit</div>
+            <div class="rule-card-title">Merchants can claim input tax credit</div>
+            <div class="rule-card-body">GST-registered merchants can claim <strong>input tax credit (ITC) on the 18% GST</strong> charged on MDR. This effectively reduces the merchant's net MDR cost.</div>
+          </div>
+        </div>
+
+        <div class="info-box success">
+          <strong>Over 95% of UPI merchant transactions are below ₹2,000</strong> or processed by small merchants — meaning they incur ₹0 MDR under the current framework. The splitting strategy is most relevant for larger purchases at qualifying merchants.
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── OFFICIAL SOURCES ──────────────────────────────────────── -->
+    <section class="section" id="sources" aria-labelledby="sources-heading">
+      <div class="container">
+        <h2 class="section-heading" id="sources-heading">Official sources</h2>
+        <p class="section-sub">These are the authoritative government and regulatory sources for UPI rules, charges and MDR framework.</p>
+
+        <div class="source-grid">
+          <a href="https://www.npci.org.in/circulars/upi" target="_blank" rel="noreferrer noopener" class="source-card">
+            <span class="source-badge">✓ Official</span><span class="source-org">National Payments Corporation of India</span>
+            <div class="source-title">NPCI — UPI circulars</div>
+            <p class="source-desc">UPI operating rules, MDR structure, transaction categories and limits.</p>
+          </a>
+          <a href="https://www.rbi.org.in/" target="_blank" rel="noreferrer noopener" class="source-card">
+            <span class="source-badge">✓ Official</span><span class="source-org">RBI</span>
+            <div class="source-title">Reserve Bank of India</div>
+            <p class="source-desc">Payment system regulation, digital payment directions and circulars.</p>
+          </a>
+          <a href="https://www.incometax.gov.in/" target="_blank" rel="noreferrer noopener" class="source-card">
+            <span class="source-badge">✓ Official</span><span class="source-org">Government of India</span>
+            <div class="source-title">Income Tax Department</div>
+            <p class="source-desc">Income tax law, TDS/TCS provisions, and e-Pay tax via UPI.</p>
+          </a>
+          <a href="https://www.pib.gov.in/" target="_blank" rel="noreferrer noopener" class="source-card">
+            <span class="source-badge">✓ Official</span><span class="source-org">Government of India</span>
+            <div class="source-title">Press Information Bureau</div>
+            <p class="source-desc">Official government announcements and UPI-related clarifications.</p>
+          </a>
+          <a href="https://www.gst.gov.in/" target="_blank" rel="noreferrer noopener" class="source-card">
+            <span class="source-badge">✓ Official</span><span class="source-org">GST Network</span>
+            <div class="source-title">GST Portal</div>
+            <p class="source-desc">GST registration, rates, returns — relevant for 18% GST on MDR.</p>
+          </a>
+        </div>
+        <p style="font-size:.78rem;color:var(--text-light);margin-top:14px;line-height:1.4">UPICalc is an independent informational tool. It is not affiliated with NPCI, RBI, or any government body. Always verify rules against the latest official circulars.</p>
+      </div>
+    </section>
+
+    <!-- ─── FAQ (expanded) ────────────────────────────────────────── -->
+    <section class="section" id="faq" aria-labelledby="faq-heading">
+      <div class="container">
+        <h2 class="section-heading" id="faq-heading">Frequently asked questions</h2>
+        <p class="section-sub">Everything you need to know about UPI MDR, splitting, and charges.</p>
+
+        <details class="faq-item"><summary>What is UPI MDR?</summary><div class="faq-body">MDR (Merchant Discount Rate) is the commercial processing fee charged by acquiring banks and payment aggregators to merchants for processing UPI payments. Under the announced framework, it's 0.4% of the transaction amount, capped at ₹300 per transaction. It is a payment ecosystem charge — <strong>not a government tax</strong>.</div></details>
+
+        <details class="faq-item"><summary>When does MDR apply?</summary><div class="faq-body">MDR applies to specified person-to-merchant (P2M) UPI transactions <strong>above ₹2,000</strong>, effective <strong>15 October 2026</strong>. Transactions of ₹2,000 or below remain free. Person-to-person (P2P) transfers are always free regardless of amount.</div></details>
+
+        <details class="faq-item"><summary>How does splitting payments help?</summary><div class="faq-body">MDR is assessed <strong>per single transaction</strong>. By splitting a ₹10,000 bill into 5 payments of ₹1,999 + 1 payment of ₹5, each individual transaction stays below the ₹2,000 threshold — meaning ₹0 MDR per payment. This could save ₹47.20 compared to a single ₹10,000 transaction.</div></details>
+
+        <details class="faq-item"><summary>Why is the default split amount ₹1,999?</summary><div class="faq-body">₹1,999 is one rupee below the ₹2,000 MDR threshold — a configurable safety buffer. You can set any amount from ₹1 to ₹1,999. The key is keeping each split payment <strong>strictly below ₹2,000</strong>. This is not an official UPI limit — it's simply a practical choice.</div></details>
+
+        <details class="faq-item"><summary>Who pays MDR — customer or merchant?</summary><div class="faq-body">The <strong>merchant</strong> always pays MDR — it's deducted from the settlement amount. Customers pay the exact invoice amount. Government directives and NPCI rules mandate that merchants <strong>cannot charge customers MDR or add checkout surcharges</strong> for UPI payments.</div></details>
+
+        <details class="faq-item"><summary>Is MDR a tax?</summary><div class="faq-body">No. MDR is a commercial payment processing charge, not a government tax. The term "UPI Tax" circulating in public debate is a misnomer. However, <strong>18% GST is applicable on the MDR amount</strong> — so for ₹40 MDR, the GST would be ₹7.20, making the total cost ₹47.20.</div></details>
+
+        <details class="faq-item"><summary>What is the maximum MDR per transaction?</summary><div class="faq-body">MDR is capped at <strong>₹300 per transaction</strong>. The cap is reached at ₹75,000 (₹75,000 × 0.4% = ₹300). For any transaction of ₹75,000 or above, the total cost is ₹300 MDR + ₹54 GST = <strong>₹354 maximum</strong>.</div></details>
+
+        <details class="faq-item"><summary>Where does the MDR money go?</summary><div class="faq-body">The 0.4% MDR is shared among: <strong>Issuing bank (~40%)</strong> for account maintenance and authorization, <strong>Acquiring bank/aggregator (~30%)</strong> for merchant onboarding and settlement, and <strong>UPI app/PSP (~30%)</strong> like PhonePe, Google Pay, or Paytm for app infrastructure. NPCI receives nominal switching fees.</div></details>
+
+        <details class="faq-item"><summary>Are small merchants exempt?</summary><div class="faq-body">Yes. Merchants collecting up to <strong>₹1,00,000 per month</strong> via static or dynamic QR codes retain full zero-MDR protection. Eligibility is determined by the acquiring bank or payment aggregator — not by the customer or transaction size alone.</div></details>
+
+        <details class="faq-item"><summary>What about essential sectors (fuel, railways)?</summary><div class="faq-body">Thin-margin and essential sectors — including Railways/IRCTC, fuel pumps, telecom, utilities, insurance, and agriculture — follow a separate <strong>flat ₹5 MDR</strong> per transaction above ₹2,000, instead of the standard 0.4% rate.</div></details>
+
+        <details class="faq-item"><summary>Does splitting have any practical limits?</summary><div class="faq-body">Yes. Most banks allow 20–50 UPI transactions per day. Very large amounts split into many payments may hit daily limits or trigger anti-fraud locks. Each split also requires entering your UPI PIN. Consider whether the MDR savings justify the extra steps.</div></details>
+
+        <details class="faq-item"><summary>Can merchants claim GST credit on MDR?</summary><div class="faq-body">Yes. GST-registered merchants can claim <strong>input tax credit (ITC)</strong> on the 18% GST charged on MDR. This effectively reduces the merchant's net MDR cost.</div></details>
+
+        <details class="faq-item"><summary>Is UPI free for person-to-person transfers?</summary><div class="faq-body">Yes. <strong>P2P (person-to-person) UPI transfers remain completely free</strong> regardless of amount under the current framework. MDR only applies to specified merchant (P2M) transactions above ₹2,000.</div></details>
+
+        <details class="faq-item"><summary>Does UPICalc process payments?</summary><div class="faq-body">No. UPICalc is a <strong>calculator and educational tool only</strong>. It does not process, initiate, or handle any UPI payments. It shows you how to mathematically split an amount and estimates potential MDR differences.</div></details>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── FOOTER ──────────────────────────────────────────────────── -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="logo"><span class="logo-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>UPICalc</div>
+          <p>UPI payment splitter &amp; MDR calculator</p>
+        </div>
+        <nav class="footer-links" aria-label="Footer navigation">
+          <a href="#calculator">Split Calculator</a>
+          <a href="#mdr-guide">MDR Guide</a>
+          <a href="#how-it-works">How it works</a>
+          <a href="#faq">FAQ</a>
+          <a href="#sources">Official Sources</a>
+          <a href="#disclaimer">Disclaimer</a>
+        </nav>
+      </div>
+      <div class="footer-disclaimer" id="disclaimer">
+        <p>UPICalc is an informational calculator only. It does not process or initiate UPI payments and does not determine whether a transaction is subject to MDR. Actual charges and payment treatment depend on the applicable UPI framework, merchant category, payment provider and other applicable rules.</p>
+        <p>Information shown is for calculation and educational purposes and is not financial, legal or regulatory advice.</p>
+      </div>
+      <p class="footer-copy">&copy; <span id="footer-year"></span> UPICalc · <span class="tag">Estimate only</span></p>
+    </div>
+  </footer>
+
+  <!-- ━━━ JAVASCRIPT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <script>
+    'use strict';
+    var lastAmount=null,lastMDR=0,lastGST=0,lastTotal=0,lastSplit=[],lastMaxPay=1999,lastSplitMDR=0;
+    document.getElementById('footer-year').textContent=new Date().getFullYear();
+
+    function toggleMenu(b){var m=document.getElementById('mobile-menu');var o=m.classList.toggle('open');b.setAttribute('aria-expanded',o)}
+    function closeMobileMenu(){document.getElementById('mobile-menu').classList.remove('open');document.querySelector('.hamburger').setAttribute('aria-expanded','false')}
+    document.addEventListener('click',function(e){var m=document.getElementById('mobile-menu');var b=document.querySelector('.hamburger');if(m.classList.contains('open')&&!m.contains(e.target)&&!b.contains(e.target))closeMobileMenu()});
+    function toggleAccordion(t,id){var b=document.getElementById(id);var o=b.classList.toggle('open');t.setAttribute('aria-expanded',o)}
+
+    function round2(n){return Math.round(n*100)/100}
+    function fmtINR(n){if(n===null||isNaN(n))return'—';return'₹'+n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
+    function fmtINRWhole(n){if(n===null||isNaN(n))return'—';if(n===Math.floor(n))return'₹'+n.toLocaleString('en-IN');return'₹'+n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
+
+    function setAmount(val){
+      document.getElementById('payment-amount').value=val;clearError();
+      document.querySelectorAll('.quick-select:not([aria-label*="split"]) .quick-btn').forEach(function(b){b.classList.remove('active')});
+      document.querySelectorAll('.quick-select:not([aria-label*="split"]) .quick-btn').forEach(function(b){if(b.textContent.replace(/[₹,\s]/g,'')===''+val)b.classList.add('active')});
+      calculate();
+    }
+    function setSplitAmount(val){
+      if(val>1999)val=1999;
+      document.getElementById('max-payment').value=val;clearSplitError();
+      document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){b.classList.remove('active')});
+      document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){if(b.textContent.replace(/[₹,\s]/g,'')===''+val)b.classList.add('active')});
+      if(document.getElementById('payment-amount').value.trim())calculate();
+    }
+
+    function showError(m){var e=document.getElementById('amount-error');var i=document.getElementById('payment-amount');e.textContent=m;e.classList.add('visible');i.classList.add('error');i.setAttribute('aria-invalid','true')}
+    function clearError(){var e=document.getElementById('amount-error');var i=document.getElementById('payment-amount');e.classList.remove('visible');i.classList.remove('error');i.removeAttribute('aria-invalid')}
+    function showSplitError(m){var e=document.getElementById('max-payment-error');var i=document.getElementById('max-payment');e.textContent=m;e.classList.add('visible');i.classList.add('error');i.setAttribute('aria-invalid','true')}
+    function clearSplitError(){var e=document.getElementById('max-payment-error');var i=document.getElementById('max-payment');e.classList.remove('visible');i.classList.remove('error');i.removeAttribute('aria-invalid')}
+
+    function readSettings(){return{mdrRate:parseFloat(document.getElementById('mdr-rate').value)/100||0.004,threshold:parseFloat(document.getElementById('mdr-threshold').value)||2000,cap:parseFloat(document.getElementById('mdr-cap').value)||300,gstRate:parseFloat(document.getElementById('gst-rate').value)/100||0.18}}
+
+    function calcMDR(amount,s){var mdr=0;if(amount>s.threshold)mdr=Math.min(round2(amount*s.mdrRate),s.cap);var gst=round2(mdr*s.gstRate);return{mdr:mdr,gst:gst,total:round2(mdr+gst)}}
+
+    function calcSplit(amount,maxPay){var p=[];var r=round2(amount);while(r>0){var v=round2(Math.min(r,maxPay));p.push(v);r=round2(r-v)}return p}
+
+    function calculate(){
+      var raw=document.getElementById('payment-amount').value.trim();
+      if(!raw){showError('Please enter the total payment amount.');hideResults();return}
+      var amount=parseFloat(raw);
+      if(isNaN(amount)||amount<0){showError('Please enter a valid amount.');hideResults();return}
+      if(amount===0){showError('Amount must be greater than ₹0.');hideResults();return}
+      clearError();
+
+      var maxPayRaw=parseFloat(document.getElementById('max-payment').value);
+      if(isNaN(maxPayRaw)||maxPayRaw<=0){showSplitError('Enter a value between ₹1 and ₹1,999.');hideResults();return}
+      if(maxPayRaw>1999){maxPayRaw=1999;document.getElementById('max-payment').value=1999;showSplitError('Capped at ₹1,999 to stay below the ₹2,000 MDR threshold.')}else{clearSplitError()}
+      var maxPay=maxPayRaw;
+
+      var s=readSettings();
+      var single=calcMDR(amount,s);
+      var payments=calcSplit(amount,maxPay);
+      var totalSplitMDR=0;
+      payments.forEach(function(p){totalSplitMDR=round2(totalSplitMDR+calcMDR(p,s).total)});
+
+      lastAmount=amount;lastMDR=single.mdr;lastGST=single.gst;lastTotal=single.total;
+      lastSplit=payments;lastMaxPay=maxPay;lastSplitMDR=totalSplitMDR;
+
+      document.getElementById('results-area').classList.add('visible');
+      document.getElementById('results-area').classList.add('animate-in');
+
+      var belowEl=document.getElementById('below-threshold');
+      var compareEl=document.getElementById('comparison-section');
+      var splitEl=document.getElementById('split-breakdown');
+
+      if(amount<=s.threshold){
+        belowEl.style.display='block';compareEl.style.display='none';
+        document.getElementById('bt-amount').textContent=fmtINRWhole(amount);
+        document.getElementById('bt-note').textContent='✓ This amount is already at or below the '+fmtINRWhole(s.threshold)+' threshold — no MDR applies, no split needed!';
+        splitEl.style.display=payments.length>1?'block':'none';
+        if(payments.length>1)renderSplitList(payments,amount,maxPay);
+      }else{
+        belowEl.style.display='none';compareEl.style.display='block';splitEl.style.display='block';
+        document.getElementById('single-cost').textContent=fmtINR(single.total);
+        document.getElementById('single-amount').textContent=fmtINRWhole(amount);
+        document.getElementById('single-mdr').textContent=fmtINR(single.mdr);
+        document.getElementById('single-gst').textContent=fmtINR(single.gst);
+        document.getElementById('split-cost').textContent=fmtINR(totalSplitMDR);
+        document.getElementById('split-total-val').textContent=fmtINRWhole(amount);
+        document.getElementById('split-count-val').textContent=payments.length;
+        document.getElementById('split-each-mdr').textContent=totalSplitMDR===0?'₹0 (below threshold)':fmtINR(totalSplitMDR);
+        var diff=round2(single.total-totalSplitMDR);
+        if(diff>0){document.getElementById('savings-callout').style.display='block';document.getElementById('savings-amount').textContent=fmtINR(diff);document.getElementById('savings-sub').textContent='Each of the '+payments.length+' payments stays below '+fmtINRWhole(s.threshold)+' — within the free threshold'}else{document.getElementById('savings-callout').style.display='none'}
+        renderSplitList(payments,amount,maxPay);
+      }
+      if(window.innerWidth<640)setTimeout(function(){document.getElementById('results-area').scrollIntoView({behavior:'smooth',block:'start'})},60);
+    }
+
+    function renderSplitList(payments,amount,maxPay){
+      document.getElementById('sr-total').textContent=fmtINRWhole(amount);
+      document.getElementById('sr-max').textContent=fmtINRWhole(maxPay);
+      document.getElementById('sr-count').textContent=payments.length;
+      var list=document.getElementById('split-list');list.innerHTML='';
+      payments.forEach(function(p,i){
+        var isLast=i===payments.length-1&&payments.length>1&&p<maxPay;
+        var d=document.createElement('div');d.className='split-item'+(isLast?' split-last':'');d.setAttribute('role','listitem');
+        d.innerHTML='<span class="split-num">'+String(i+1).padStart(2,'0')+'</span><span class="split-amount">'+fmtINRWhole(p)+'</span>';
+        list.appendChild(d);
+      });
+      var verifyTotal=round2(payments.reduce(function(s,v){return s+v},0));
+      var tr=document.createElement('div');tr.className='split-total-row';
+      tr.innerHTML='<span>Total</span><span class="split-total-amount">'+fmtINRWhole(verifyTotal)+'</span>';
+      list.appendChild(tr);
+    }
+
+    function resetCalculator(){
+      document.getElementById('payment-amount').value='';document.getElementById('max-payment').value=1999;
+      clearError();clearSplitError();hideResults();
+      document.querySelectorAll('.quick-btn').forEach(function(b){b.classList.remove('active')});
+      document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){if(b.textContent.replace(/[₹,\s]/g,'')==='1999')b.classList.add('active')});
+      lastAmount=null;lastMDR=0;lastGST=0;lastTotal=0;lastSplit=[];lastSplitMDR=0;
+      document.getElementById('payment-amount').focus();
+    }
+    function hideResults(){document.getElementById('results-area').classList.remove('visible','animate-in');document.getElementById('below-threshold').style.display='none';document.getElementById('comparison-section').style.display='none';document.getElementById('split-breakdown').style.display='none'}
+
+    function buildCopyText(){
+      if(!lastAmount)return'';
+      var t='UPICalc — UPI Payment Splitter\n\n';
+      t+='Total: '+fmtINRWhole(lastAmount)+'\n';
+      t+='Maximum per payment: '+fmtINRWhole(lastMaxPay)+'\n\n';
+      t+='Payment split:\n';
+      lastSplit.forEach(function(p,i){t+=(i+1)+'. '+fmtINRWhole(p)+'\n'});
+      t+='\nTotal payments: '+lastSplit.length+'\n';
+      t+='Total: '+fmtINRWhole(round2(lastSplit.reduce(function(s,v){return s+v},0)))+'\n\n';
+      t+='Without splitting:\n';
+      t+='  MDR: '+fmtINR(lastMDR)+'\n  GST on MDR: '+fmtINR(lastGST)+'\n  Total cost: '+fmtINR(lastTotal)+'\n\n';
+      t+='With splitting (each below ₹2,000):\n';
+      t+='  Estimated cost: '+fmtINR(lastSplitMDR)+'\n';
+      var diff=round2(lastTotal-lastSplitMDR);
+      if(diff>0)t+='  Potential difference: '+fmtINR(diff)+'\n';
+      t+='\nNote: Actual MDR treatment depends on applicable rules.\nCalculated by UPICalc';
+      return t;
+    }
+
+    function showCopied(){var e=document.getElementById('copy-confirm');e.classList.add('visible');setTimeout(function(){e.classList.remove('visible')},2200)}
+    function copyResult(){var t=buildCopyText();if(!t)return;if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(showCopied).catch(function(){fallbackCopy(t)})}else{fallbackCopy(t)}}
+    function fallbackCopy(t){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.focus();a.select();document.execCommand('copy');document.body.removeChild(a);showCopied()}
+    // Uses Web Share API where supported; falls back to clipboard copy
+    function shareResult(){var t=buildCopyText();if(!t)return;if(navigator.share){navigator.share({title:'UPICalc — Payment Split',text:t}).catch(function(){})}else{copyResult()}}
+
+    document.getElementById('payment-amount').addEventListener('input',function(){clearError();document.querySelectorAll('.quick-select:not([aria-label*="split"]) .quick-btn').forEach(function(b){b.classList.remove('active')})});
+    document.getElementById('payment-amount').addEventListener('keydown',function(e){if(e.key==='Enter')calculate()});
+    document.getElementById('max-payment').addEventListener('keydown',function(e){if(e.key==='Enter')calculate()});
+    document.getElementById('max-payment').addEventListener('input',function(){
+      var v=parseFloat(this.value);
+      document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){b.classList.remove('active')});
+      if(!isNaN(v)&&v>1999){showSplitError('Maximum is ₹1,999 — amounts of ₹2,000 or above may incur MDR.')}else{clearSplitError()}
+    });
+  </script>
+
+</body>
+</html>
