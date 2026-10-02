@@ -415,6 +415,19 @@
             <button class="quick-btn" type="button" onclick="setAmount(50000)">₹50,000</button>
           </div>
 
+          <!-- Payment Type -->
+          <div class="input-group" style="margin-top:4px;">
+            <label class="input-label" for="payment-type">Payment type / merchant category</label>
+            <select id="payment-type" class="amount-input" style="padding-left:14px;cursor:pointer;font-size:0.95rem;font-weight:500;height:auto;padding-top:12px;padding-bottom:12px;" onchange="onPaymentTypeChange()">
+              <option value="p2m">Regular merchant (P2M) — 0.4%, cap ₹300</option>
+              <option value="capital">Capital market / Broking / Mutual Fund — 0.02%, cap ₹300</option>
+              <option value="special">Special sector (Fuel / Railways / Telecom / Utilities) — Flat ₹5</option>
+              <option value="small">Small merchant (≤ ₹1 lakh/month) — 0% FREE</option>
+              <option value="p2p">P2P transfer (person to person) — 0% FREE</option>
+            </select>
+            <p id="payment-type-notice" style="font-size:.78rem;margin-top:6px;line-height:1.5;padding:8px 12px;border-radius:6px;display:none;"></p>
+          </div>
+
           <!-- ─── SPLIT AMOUNT (hero feature) ─────────────────────── -->
           <div class="split-box">
             <div class="split-box-header">
@@ -742,37 +755,86 @@
       </div>
     </section>
 
+    <!-- ─── GST ON MDR GUIDE ──────────────────────────────────────── -->
+    <section class="section" id="gst-guide" aria-labelledby="gst-heading">
+      <div class="container">
+        <h2 class="section-heading" id="gst-heading">GST on MDR — what merchants need to know</h2>
+        <p class="section-sub">The 18% GST is charged on the MDR fee amount — not on your sale amount. GST-registered merchants can reclaim it.</p>
+
+        <div class="info-box warning">
+          <strong>Key clarification:</strong> GST does NOT apply to the payment itself. It only applies to the MDR processing fee charged to the merchant. Your customers pay zero extra GST for using UPI.
+        </div>
+
+        <!-- Simple example card -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:24px;">
+          <div class="rule-card">
+            <div class="rule-card-label">Example — ₹10,000 sale</div>
+            <div class="rule-card-title">How the deduction works</div>
+            <div class="rule-card-body">
+              Sale amount: <strong>₹10,000</strong><br>
+              MDR (0.4%): <strong>₹40.00</strong><br>
+              GST on MDR (18%): <strong>₹7.20</strong><br>
+              Total deducted: <strong style="color:var(--orange-text)">₹47.20</strong><br>
+              Merchant receives: <strong style="color:var(--green-deep)">₹9,952.80</strong>
+            </div>
+          </div>
+          <div class="rule-card" style="border-left-color:#3b82f6;">
+            <div class="rule-card-label">GST-registered merchant</div>
+            <div class="rule-card-title">Claim ₹7.20 back via ITC</div>
+            <div class="rule-card-body">
+              If you are GST-registered, you can claim the <strong>₹7.20 GST back as Input Tax Credit (ITC)</strong> under Section 16 of the CGST Act, 2017.<br><br>
+              Net real cost after ITC: <strong style="color:var(--green-deep)">₹40.00 only</strong>
+            </div>
+          </div>
+          <div class="rule-card warn">
+            <div class="rule-card-label">Not GST-registered?</div>
+            <div class="rule-card-title">Full ₹47.20 is your cost</div>
+            <div class="rule-card-body">
+              Composition scheme dealers and unregistered merchants <strong>cannot claim ITC</strong>. The full MDR + GST amount is a sunk operational cost for them.
+            </div>
+          </div>
+        </div>
+
+        <p style="font-size:.78rem;color:var(--text-light);line-height:1.5">GST on MDR is classified under <strong>SAC 997159</strong> (payment processing and settlement services). Your acquiring bank or payment aggregator should issue a monthly GST debit statement containing your GSTIN for ITC claims.</p>
+      </div>
+    </section>
+
     <!-- ─── OFFICIAL SOURCES ──────────────────────────────────────── -->
     <section class="section" id="sources" aria-labelledby="sources-heading">
       <div class="container">
-        <h2 class="section-heading" id="sources-heading">Official sources</h2>
-        <p class="section-sub">These are the authoritative government and regulatory sources for UPI rules, charges and MDR framework.</p>
+        <h2 class="section-heading" id="sources-heading">Official sources & legal references</h2>
+        <p class="section-sub">The authoritative government documents, gazette notifications and regulatory circulars that govern the UPI MDR framework.</p>
 
         <div class="source-grid">
+          <a href="https://egazette.gov.in/" target="_blank" rel="noreferrer noopener" class="source-card">
+            <span class="source-badge">✓ Parliament</span><span class="source-org">Government of India</span>
+            <div class="source-title">Taxation &amp; Other Laws (Amendment) Act, 2026</div>
+            <p class="source-desc">Primary legislation amending Section 10A of PSSA 2007. Presidential assent: 17 Aug 2026. Published in the Gazette of India Extraordinary.</p>
+          </a>
+          <a href="https://www.financialservices.gov.in/" target="_blank" rel="noreferrer noopener" class="source-card">
+            <span class="source-badge">✓ Ministry</span><span class="source-org">Ministry of Finance (DFS)</span>
+            <div class="source-title">MoF Notification — F. No. 10/02/2026-BO.II</div>
+            <p class="source-desc">Dated 14 September 2026. Prescribes zero-MDR on UPI ≤ ₹2,000 and RuPay debit cards, and permits MDR on transactions above ₹2,000.</p>
+          </a>
           <a href="https://www.npci.org.in/circulars/upi" target="_blank" rel="noreferrer noopener" class="source-card">
-            <span class="source-badge">✓ Official</span><span class="source-org">National Payments Corporation of India</span>
-            <div class="source-title">NPCI — UPI circulars</div>
-            <p class="source-desc">UPI operating rules, MDR structure, transaction categories and limits.</p>
+            <span class="source-badge">✓ NPCI</span><span class="source-org">National Payments Corporation of India</span>
+            <div class="source-title">NPCI Circular NPCI/UPI/2026-27/044</div>
+            <p class="source-desc">Dated 15 September 2026. Formalises the 0.4% MDR, ₹300 cap, flat ₹5 for special sectors, 0.02% for capital markets, and ecosystem interchange rules. Effective 15 Oct 2026.</p>
           </a>
-          <a href="https://www.rbi.org.in/" target="_blank" rel="noreferrer noopener" class="source-card">
-            <span class="source-badge">✓ Official</span><span class="source-org">RBI</span>
-            <div class="source-title">Reserve Bank of India</div>
-            <p class="source-desc">Payment system regulation, digital payment directions and circulars.</p>
+          <a href="https://www.sci.gov.in/" target="_blank" rel="noreferrer noopener" class="source-card">
+            <span class="source-badge">✓ Judiciary</span><span class="source-org">Supreme Court of India</span>
+            <div class="source-title">WP(C) Diary No. 41829/2026</div>
+            <p class="source-desc">Constitutional challenge to Section 10A PSSA amendment. SC issued notice to Union, RBI &amp; NPCI but refused to grant an interim stay on the Oct 15, 2026 implementation.</p>
           </a>
-          <a href="https://www.incometax.gov.in/" target="_blank" rel="noreferrer noopener" class="source-card">
-            <span class="source-badge">✓ Official</span><span class="source-org">Government of India</span>
-            <div class="source-title">Income Tax Department</div>
-            <p class="source-desc">Income tax law, TDS/TCS provisions, and e-Pay tax via UPI.</p>
-          </a>
-          <a href="https://www.pib.gov.in/" target="_blank" rel="noreferrer noopener" class="source-card">
-            <span class="source-badge">✓ Official</span><span class="source-org">Government of India</span>
-            <div class="source-title">Press Information Bureau</div>
-            <p class="source-desc">Official government announcements and UPI-related clarifications.</p>
+          <a href="https://pib.gov.in/" target="_blank" rel="noreferrer noopener" class="source-card">
+            <span class="source-badge">✓ PIB</span><span class="source-org">Press Information Bureau</span>
+            <div class="source-title">PIB Fact-check — Release ID 218942</div>
+            <p class="source-desc">Official government clarification: consumers will not be charged MDR. Merchants cannot levy checkout surcharges on UPI payments.</p>
           </a>
           <a href="https://www.gst.gov.in/" target="_blank" rel="noreferrer noopener" class="source-card">
-            <span class="source-badge">✓ Official</span><span class="source-org">GST Network</span>
-            <div class="source-title">GST Portal</div>
-            <p class="source-desc">GST registration, rates, returns — relevant for 18% GST on MDR.</p>
+            <span class="source-badge">✓ CBIC</span><span class="source-org">GST Network / CBIC</span>
+            <div class="source-title">CGST Act, Section 16 — ITC on MDR</div>
+            <p class="source-desc">GST-registered merchants can claim Input Tax Credit on the 18% GST paid on MDR. SAC code 997159 applies to payment processing services.</p>
           </a>
         </div>
         <p style="font-size:.78rem;color:var(--text-light);margin-top:14px;line-height:1.4">UPICalc is an independent informational tool. It is not affiliated with NPCI, RBI, or any government body. Always verify rules against the latest official circulars.</p>
@@ -876,9 +938,67 @@
     function showSplitError(m){var e=document.getElementById('max-payment-error');var i=document.getElementById('max-payment');e.textContent=m;e.classList.add('visible');i.classList.add('error');i.setAttribute('aria-invalid','true')}
     function clearSplitError(){var e=document.getElementById('max-payment-error');var i=document.getElementById('max-payment');e.classList.remove('visible');i.classList.remove('error');i.removeAttribute('aria-invalid')}
 
+    // ─── PAYMENT TYPE LOGIC ───────────────────────────────────────────
+    var PAYMENT_TYPES = {
+      p2m:     { label: 'Regular merchant (P2M)', mode: 'pct', rate: 0.004, cap: 300, threshold: 2000 },
+      capital: { label: 'Capital market / Broking', mode: 'pct', rate: 0.0002, cap: 300, threshold: 2000,
+                 notice: '⚠ Capital market rate (0.02%) applies to SEBI-registered brokers, AMCs and DPs. Verify the exact charge with your acquiring bank or the latest NPCI circular NPCI/UPI/2026-27/044.' },
+      special: { label: 'Special sector (Fuel/Rail/Telecom)', mode: 'flat', flatFee: 5, threshold: 2000,
+                 notice: '⚠ Special sector flat ₹5 MDR applies to fuel pumps, IRCTC/Railways, telecom, utility bills, insurance and agricultural inputs for transactions above ₹2,000. Verify with your acquiring bank or NPCI circular.' },
+      small:   { label: 'Small merchant (≤ ₹1L/month)', mode: 'free', threshold: 2000,
+                 notice: '✓ Small merchants collecting ≤ ₹1 lakh/month via UPI QR codes are exempt from MDR under the zero-MDR protection framework.' },
+      p2p:     { label: 'P2P transfer', mode: 'free', threshold: 999999,
+                 notice: '✓ Person-to-person (P2P) transfers are always free regardless of amount — no MDR at any value.' }
+    };
+
+    function onPaymentTypeChange() {
+      var type = document.getElementById('payment-type').value;
+      var cfg = PAYMENT_TYPES[type];
+      var noticeEl = document.getElementById('payment-type-notice');
+      if (cfg.notice) {
+        noticeEl.textContent = cfg.notice;
+        noticeEl.style.display = 'block';
+        if (cfg.mode === 'free') {
+          noticeEl.style.background = 'var(--green-light)';
+          noticeEl.style.color = 'var(--green-deep)';
+          noticeEl.style.border = '1px solid var(--green-border)';
+        } else {
+          noticeEl.style.background = 'var(--orange-light)';
+          noticeEl.style.color = 'var(--orange-text)';
+          noticeEl.style.border = '1px solid var(--orange-border)';
+        }
+      } else {
+        noticeEl.style.display = 'none';
+      }
+      // Auto-recalculate if amount already entered
+      if (document.getElementById('payment-amount').value.trim()) calculate();
+    }
+
+    function getPaymentConfig() {
+      var type = document.getElementById('payment-type').value;
+      return PAYMENT_TYPES[type] || PAYMENT_TYPES['p2m'];
+    }
+
     function readSettings(){return{mdrRate:parseFloat(document.getElementById('mdr-rate').value)/100||0.004,threshold:parseFloat(document.getElementById('mdr-threshold').value)||2000,cap:parseFloat(document.getElementById('mdr-cap').value)||300,gstRate:parseFloat(document.getElementById('gst-rate').value)/100||0.18}}
 
-    function calcMDR(amount,s){var mdr=0;if(amount>s.threshold)mdr=Math.min(round2(amount*s.mdrRate),s.cap);var gst=round2(mdr*s.gstRate);return{mdr:mdr,gst:gst,total:round2(mdr+gst)}}
+    function calcMDR(amount, s, cfg) {
+      var gstRate = s ? s.gstRate : 0.18;
+      var mdr = 0;
+      if (!cfg) cfg = PAYMENT_TYPES['p2m'];
+      if (cfg.mode === 'free') {
+        mdr = 0;
+      } else if (cfg.mode === 'flat') {
+        mdr = amount > cfg.threshold ? cfg.flatFee : 0;
+      } else {
+        // pct mode — use cfg rates, ignore advanced settings for category-specific
+        var rate = cfg.rate;
+        var cap = cfg.cap;
+        var thresh = cfg.threshold;
+        if (amount > thresh) mdr = Math.min(round2(amount * rate), cap);
+      }
+      var gst = round2(mdr * gstRate);
+      return { mdr: mdr, gst: gst, total: round2(mdr + gst) };
+    }
 
     function calcSplit(amount,maxPay){var p=[];var r=round2(amount);while(r>0){var v=round2(Math.min(r,maxPay));p.push(v);r=round2(r-v)}return p}
 
@@ -896,10 +1016,16 @@
       var maxPay=maxPayRaw;
 
       var s=readSettings();
-      var single=calcMDR(amount,s);
+      var cfg=getPaymentConfig();
+      var single=calcMDR(amount,s,cfg);
       var payments=calcSplit(amount,maxPay);
       var totalSplitMDR=0;
-      payments.forEach(function(p){totalSplitMDR=round2(totalSplitMDR+calcMDR(p,s).total)});
+      payments.forEach(function(p){totalSplitMDR=round2(totalSplitMDR+calcMDR(p,s,cfg).total)});
+
+      // Update MDR label in single payment card to reflect current category
+      var mdrLabel = cfg.mode==='flat' ? 'MDR (flat ₹'+cfg.flatFee+')' : cfg.mode==='free' ? 'MDR (exempt)' : 'MDR ('+Math.round(cfg.rate*10000)/100+'%)';
+      var mdrLabelEl = document.querySelector('#single-mdr').closest('.scenario-row').querySelector('.scenario-row-label');
+      if(mdrLabelEl) mdrLabelEl.textContent = mdrLabel;
 
       lastAmount=amount;lastMDR=single.mdr;lastGST=single.gst;lastTotal=single.total;
       lastSplit=payments;lastMaxPay=maxPay;lastSplitMDR=totalSplitMDR;
@@ -911,12 +1037,13 @@
       var compareEl=document.getElementById('comparison-section');
       var splitEl=document.getElementById('split-breakdown');
 
-      if(amount<=s.threshold){
+      var effectiveThreshold = cfg.mode==='free' ? 999999 : cfg.threshold;
+      if(amount<=effectiveThreshold){
         belowEl.style.display='block';compareEl.style.display='none';
         document.getElementById('bt-amount').textContent=fmtINRWhole(amount);
-        document.getElementById('bt-note').textContent='✓ This amount is already at or below the '+fmtINRWhole(s.threshold)+' threshold — no MDR applies, no split needed!';
-        splitEl.style.display=payments.length>1?'block':'none';
-        if(payments.length>1)renderSplitList(payments,amount,maxPay);
+        var freeReason = cfg.mode==='free' ? '✓ '+cfg.label+' — no MDR applies to this payment type!' : '✓ This amount is already at or below the ₹2,000 threshold — no MDR applies, no split needed!';
+        document.getElementById('bt-note').textContent=freeReason;
+        splitEl.style.display='none';
       }else{
         belowEl.style.display='none';compareEl.style.display='block';splitEl.style.display='block';
         document.getElementById('single-cost').textContent=fmtINR(single.total);
@@ -928,7 +1055,7 @@
         document.getElementById('split-count-val').textContent=payments.length;
         document.getElementById('split-each-mdr').textContent=totalSplitMDR===0?'₹0 (below threshold)':fmtINR(totalSplitMDR);
         var diff=round2(single.total-totalSplitMDR);
-        if(diff>0){document.getElementById('savings-callout').style.display='block';document.getElementById('savings-amount').textContent=fmtINR(diff);document.getElementById('savings-sub').textContent='Each of the '+payments.length+' payments stays below '+fmtINRWhole(s.threshold)+' — within the free threshold'}else{document.getElementById('savings-callout').style.display='none'}
+        if(diff>0){document.getElementById('savings-callout').style.display='block';document.getElementById('savings-amount').textContent=fmtINR(diff);document.getElementById('savings-sub').textContent='Each of the '+payments.length+' payments stays below ₹2,000 — within the free threshold'}else{document.getElementById('savings-callout').style.display='none'}
         renderSplitList(payments,amount,maxPay);
       }
       if(window.innerWidth<640)setTimeout(function(){document.getElementById('results-area').scrollIntoView({behavior:'smooth',block:'start'})},60);
