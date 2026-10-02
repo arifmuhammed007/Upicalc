@@ -440,10 +440,10 @@
               </div>
             </div>
             <div class="input-group" style="margin-bottom:8px;">
-              <label class="input-label" for="max-payment">Maximum per split payment (max ₹1,999)</label>
+              <label class="input-label" for="max-payment">Maximum per split payment (max ₹2,000)</label>
               <div class="input-wrap">
                 <span class="input-prefix" aria-hidden="true">₹</span>
-                <input type="number" id="max-payment" class="amount-input" value="1999" min="1" max="1999" step="1" inputmode="decimal" autocomplete="off" aria-describedby="max-payment-error" />
+                <input type="number" id="max-payment" class="amount-input" value="1999" min="1" max="2000" step="1" inputmode="decimal" autocomplete="off" aria-describedby="max-payment-error" />
               </div>
               <p id="max-payment-error" class="input-error" role="alert" aria-live="polite"></p>
             </div>
@@ -1011,8 +1011,8 @@
       clearError();
 
       var maxPayRaw=parseFloat(document.getElementById('max-payment').value);
-      if(isNaN(maxPayRaw)||maxPayRaw<=0){showSplitError('Enter a value between ₹1 and ₹1,999.');hideResults();return}
-      if(maxPayRaw>1999){maxPayRaw=1999;document.getElementById('max-payment').value=1999;showSplitError('Capped at ₹1,999 to stay below the ₹2,000 MDR threshold.')}else{clearSplitError()}
+      if(isNaN(maxPayRaw)||maxPayRaw<=0){showSplitError('Enter a value between ₹1 and ₹2,000.');hideResults();return}
+      if(maxPayRaw>2000){maxPayRaw=2000;document.getElementById('max-payment').value=2000;showSplitError('Capped at ₹2,000 to stay within the free MDR threshold.')}else{clearSplitError()}
       var maxPay=maxPayRaw;
 
       var s=readSettings();
@@ -1119,7 +1119,7 @@
     document.getElementById('max-payment').addEventListener('input',function(){
       var v=parseFloat(this.value);
       document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){b.classList.remove('active')});
-      if(!isNaN(v)&&v>1999){showSplitError('Maximum is ₹1,999 — amounts of ₹2,000 or above may incur MDR.')}else{clearSplitError()}
+      if(!isNaN(v)&&v>2000){showSplitError('Maximum is ₹2,000 — amounts above this incur MDR.')}else{clearSplitError()}
     });
   </script>
 
