@@ -458,18 +458,18 @@
               <label class="input-label" for="max-payment">Maximum per split payment (max ₹2,000)</label>
               <div class="input-wrap">
                 <span class="input-prefix" aria-hidden="true">₹</span>
-                <input type="number" id="max-payment" class="amount-input" value="1999" min="1" max="2000" step="1" inputmode="decimal" autocomplete="off" aria-describedby="max-payment-error" />
+                <input type="number" id="max-payment" class="amount-input" value="2000" min="1" max="2000" step="1" inputmode="decimal" autocomplete="off" aria-describedby="max-payment-error" />
               </div>
               <p id="max-payment-error" class="input-error" role="alert" aria-live="polite"></p>
             </div>
             <div class="quick-select split-quick" role="group" aria-label="Quick split amount selection">
               <button class="quick-btn" type="button" onclick="setSplitAmount(500)">₹500</button>
-              <button class="quick-btn" type="button" onclick="setSplitAmount(999)">₹999</button>
-              <button class="quick-btn" type="button" onclick="setSplitAmount(1499)">₹1,499</button>
-              <button class="quick-btn active" type="button" onclick="setSplitAmount(1999)">₹1,999</button>
+              <button class="quick-btn" type="button" onclick="setSplitAmount(1000)">₹1,000</button>
+              <button class="quick-btn" type="button" onclick="setSplitAmount(1999)">₹1,999</button>
+              <button class="quick-btn active" type="button" onclick="setSplitAmount(2000)">₹2,000</button>
             </div>
             <p class="split-hint">
-              Default ₹1,999 — one rupee below the ₹2,000 MDR threshold. You can lower this to split into even smaller amounts, but cannot exceed ₹1,999.
+              Default ₹2,000 — the exact mathematical maximum allowed within the free threshold. You can lower this to split into even smaller amounts, but cannot exceed ₹2,000.
             </p>
           </div>
 
@@ -547,6 +547,14 @@
               <div class="split-stat"><div class="split-stat-value" id="sr-count">—</div><div class="split-stat-label">Payments</div></div>
             </div>
             <div class="split-list" id="split-list" role="list" aria-label="Individual payments"></div>
+            
+            <div class="info-box warn" style="margin-top:20px;margin-bottom:20px;">
+              <h4 style="margin:0 0 8px 0;font-size:.9rem;color:var(--orange-text);">⚠ Important Compliance & Limit Warning</h4>
+              <ul style="margin:0;padding-left:18px;font-size:.85rem;line-height:1.5;color:var(--orange-text);">
+                <li style="margin-bottom:6px;"><strong>Merchant Risk ("Smurfing"):</strong> Deliberately requesting customers to break down a single large invoice into multiple smaller payments to evade fees violates most Payment Gateway Terms of Service (Razorpay, PhonePe, etc.) and can result in account blocks or held settlements.</li>
+                <li><strong>Customer Risk (Daily Limits):</strong> Customers have strict daily UPI transaction count limits (usually 10-20 transactions per day per bank account). Splitting a large bill into many small payments can exhaust this limit, leaving them unable to make other payments later in the day.</li>
+              </ul>
+            </div>
 
             <div class="share-bar">
               <button class="btn-secondary" type="button" onclick="copyResult()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy result</button>
@@ -590,12 +598,12 @@
           <div class="audience-card">
             <div class="audience-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green-deep)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
             <h3 class="audience-title">For Customers</h3>
-            <p class="audience-desc">Paying a merchant above ₹2,000? Split the payment into ₹1,999 chunks — each payment stays below the MDR threshold. The merchant receives the same total without additional charges.</p>
+            <p class="audience-desc">Understand how merchant fees work. If you choose to split a payment to help a local merchant, be aware that doing many back-to-back transactions consumes your daily bank transaction limit (usually 10-20/day) and may trigger anti-fraud locks.</p>
           </div>
           <div class="audience-card">
-            <div class="audience-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green-deep)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+            <div class="audience-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange-text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
             <h3 class="audience-title">For Merchants</h3>
-            <p class="audience-desc">Request customers to split larger payments below ₹2,000. This way each transaction may stay under the MDR threshold, potentially reducing settlement deductions on your end.</p>
+            <p class="audience-desc">Calculate your theoretical MDR costs. <strong>Compliance Warning:</strong> Deliberately requesting customers to break down a single large invoice into multiple smaller payments ("smurfing") to evade fees violates most Payment Gateway Terms of Service and can result in account blocks or held settlements.</p>
           </div>
         </div>
       </div>
@@ -1098,10 +1106,10 @@
     }
 
     function resetCalculator(){
-      document.getElementById('payment-amount').value='';document.getElementById('max-payment').value=1999;
+      document.getElementById('payment-amount').value='';document.getElementById('max-payment').value=2000;
       clearError();clearSplitError();hideResults();
       document.querySelectorAll('.quick-btn').forEach(function(b){b.classList.remove('active')});
-      document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){if(b.textContent.replace(/[₹,\s]/g,'')==='1999')b.classList.add('active')});
+      document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){if(b.textContent.replace(/[₹,\s]/g,'')==='2000')b.classList.add('active')});
       lastAmount=null;lastMDR=0;lastGST=0;lastTotal=0;lastSplit=[];lastSplitMDR=0;
       document.getElementById('payment-amount').focus();
     }
