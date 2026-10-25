@@ -26,10 +26,99 @@
   <meta name="twitter:image" content="https://upicalc.in/logo.png" />
   
   <meta name="theme-color" content="#166534" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+  <!-- Favicons and App Icons for Google Search & Browsers -->
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <!-- Structured Data: WebApplication & FAQPage Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://upicalc.in/#app",
+        "name": "UPICalc",
+        "url": "https://upicalc.in/",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All",
+        "description": "Free Indian UPI MDR & Payment Split Calculator to stay below ₹2,000 threshold and estimate merchant processing fees.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "UPICalc",
+          "url": "https://upicalc.in/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://upicalc.in/favicon-512x512.png",
+            "width": 512,
+            "height": 512
+          }
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://upicalc.in/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How to avoid MDR fee on UPI?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The easiest way to avoid the MDR fee on UPI is to ensure the transaction amount is exactly ₹2,000 or less. If you have a large bill, you can split the payment into multiple chunks below the ₹2,000 threshold so each transaction stays within the zero-MDR rule."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is there a free UPI MDR Calculator in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, UPICalc is a completely free MDR calculator for Indian merchants and customers, calculating 0.4% fees, the ₹300 maximum cap, and 18% GST."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is UPI MDR?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "MDR (Merchant Discount Rate) is the commercial processing fee charged to merchants by payment aggregators and banks for UPI transactions. It is not a government tax."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "When does MDR apply?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The 0.4% MDR applies to P2M transactions above ₹2,000. Transactions of ₹2,000 or below and all P2P transfers are permanently free."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Who pays MDR — customer or merchant?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The merchant always pays MDR through settlement deductions. Customers pay only the invoice amount without any extra surcharges."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/png" href="logo.png" />
 
   <style>
     :root {
