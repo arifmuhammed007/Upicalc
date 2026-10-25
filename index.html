@@ -1043,14 +1043,14 @@
     function setAmount(val){
       document.getElementById('payment-amount').value=val;clearError();
       document.querySelectorAll('.quick-select:not([aria-label*="split"]) .quick-btn').forEach(function(b){b.classList.remove('active')});
-      document.querySelectorAll('.quick-select:not([aria-label*="split"]) .quick-btn').forEach(function(b){if(b.textContent.replace(/[₹,\s]/g,'')===''+val)b.classList.add('active')});
+      document.querySelectorAll('.quick-select:not([aria-label*="split"]) .quick-btn').forEach(function(b){if(b.textContent.replace(/[^0-9]/g,'')===''+val)b.classList.add('active')});
       calculate();
     }
     function setSplitAmount(val){
-      if(val>1999)val=1999;
+      if(val>2000)val=2000;
       document.getElementById('max-payment').value=val;clearSplitError();
       document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){b.classList.remove('active')});
-      document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){if(b.textContent.replace(/[₹,\s]/g,'')===''+val)b.classList.add('active')});
+      document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){if(b.textContent.replace(/[^0-9]/g,'')===''+val)b.classList.add('active')});
       if(document.getElementById('payment-amount').value.trim())calculate();
     }
 
@@ -1158,15 +1158,9 @@
       var compareEl=document.getElementById('comparison-section');
       var splitEl=document.getElementById('split-breakdown');
 
-      var effectiveThreshold = cfg.mode==='free' ? 999999 : cfg.threshold;
-      if(amount<=effectiveThreshold){
-        belowEl.style.display='block';compareEl.style.display='none';
-        document.getElementById('bt-amount').textContent=fmtINRWhole(amount);
-        var freeReason = cfg.mode==='free' ? '✓ '+cfg.label+' — no MDR applies to this payment type!' : '✓ This amount is already at or below the ₹2,000 threshold — no MDR applies, no split needed!';
-        document.getElementById('bt-note').textContent=freeReason;
-        splitEl.style.display='none';
-      }else{
-        belowEl.style.display='none';compareEl.style.display='block';splitEl.style.display='block';
+      if(single.total > 0){
+        belowEl.style.display='none';
+        compareEl.style.display='block';
         document.getElementById('single-cost').textContent=fmtINR(single.total);
         document.getElementById('single-amount').textContent=fmtINRWhole(amount);
         document.getElementById('single-mdr').textContent=fmtINR(single.mdr);
@@ -1176,8 +1170,33 @@
         document.getElementById('split-count-val').textContent=payments.length;
         document.getElementById('split-each-mdr').textContent=totalSplitMDR===0?'₹0 (below threshold)':fmtINR(totalSplitMDR);
         var diff=round2(single.total-totalSplitMDR);
-        if(diff>0){document.getElementById('savings-callout').style.display='block';document.getElementById('savings-amount').textContent=fmtINR(diff);document.getElementById('savings-sub').textContent='Each of the '+payments.length+' payments stays below ₹2,000 — within the free threshold'}else{document.getElementById('savings-callout').style.display='none'}
+        if(diff>0){
+          document.getElementById('savings-callout').style.display='block';
+          document.getElementById('savings-amount').textContent=fmtINR(diff);
+          document.getElementById('savings-sub').textContent='Each of the '+payments.length+' payments stays below ₹2,000 — within the free threshold';
+        } else {
+          document.getElementById('savings-callout').style.display='none';
+        }
+      } else {
+        compareEl.style.display='none';
+        belowEl.style.display='block';
+        document.getElementById('bt-amount').textContent=fmtINRWhole(amount);
+        var freeReason = '';
+        if (cfg.mode === 'free') {
+          freeReason = '✓ ' + cfg.label + ' — 100% exempt from MDR charges at any amount.';
+        } else if (payments.length > 1) {
+          freeReason = '✓ Amount ' + fmtINRWhole(amount) + ' is within the ₹2,000 zero-MDR threshold. Below is your split breakdown into ' + payments.length + ' payments.';
+        } else {
+          freeReason = '✓ Amount ' + fmtINRWhole(amount) + ' is already below your ₹' + maxPay + ' split limit and within the ₹2,000 threshold — no split needed!';
+        }
+        document.getElementById('bt-note').textContent=freeReason;
+      }
+
+      if(payments.length > 1){
+        splitEl.style.display='block';
         renderSplitList(payments,amount,maxPay);
+      } else {
+        splitEl.style.display='none';
       }
       if(window.innerWidth<640)setTimeout(function(){document.getElementById('results-area').scrollIntoView({behavior:'smooth',block:'start'})},60);
     }
@@ -1203,7 +1222,7 @@
       document.getElementById('payment-amount').value='';document.getElementById('max-payment').value=1999;
       clearError();clearSplitError();hideResults();
       document.querySelectorAll('.quick-btn').forEach(function(b){b.classList.remove('active')});
-      document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){if(b.textContent.replace(/[₹,\s]/g,'')==='1999')b.classList.add('active')});
+      document.querySelectorAll('[aria-label*="split"] .quick-btn').forEach(function(b){if(b.textContent.replace(/[^0-9]/g,'')==='1999')b.classList.add('active')});
       lastAmount=null;lastMDR=0;lastGST=0;lastTotal=0;lastSplit=[];lastSplitMDR=0;
       document.getElementById('payment-amount').focus();
     }
