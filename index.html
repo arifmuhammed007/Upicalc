@@ -307,10 +307,28 @@
     .settings-note{font-size:.73rem;color:var(--text-light);margin-top:12px;line-height:1.4}
 
     /* ─── RESULTS ────────────────────────────────────────────────── */
-    #results-area{display:none;margin-top:28px}
+    #results-area{display:none;margin-top:28px;scroll-margin-top:24px}
     #results-area.visible{display:block}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-    .animate-in{animation:fadeIn .25s ease}
+    @keyframes cardFadeIn{
+      0%{opacity:0;transform:translateY(18px) scale(0.98)}
+      100%{opacity:1;transform:translateY(0) scale(1)}
+    }
+    @keyframes costNumberPop{
+      0%{transform:scale(0.9);opacity:0.6}
+      60%{transform:scale(1.05)}
+      100%{transform:scale(1);opacity:1}
+    }
+    @keyframes splitItemCascade{
+      0%{opacity:0;transform:translateY(10px)}
+      100%{opacity:1;transform:translateY(0)}
+    }
+    .animate-in{animation:cardFadeIn .35s cubic-bezier(0.16,1,0.3,1)}
+    .animate-in .scenario-card, .animate-in .below-threshold-card, .animate-in .split-stat{
+      animation:cardFadeIn .38s cubic-bezier(0.16,1,0.3,1) both
+    }
+    .animate-in .scenario-cost, .animate-in .savings-amount{
+      animation:costNumberPop .42s cubic-bezier(0.16,1,0.3,1) both
+    }
 
     /* Comparison cards */
     .compare-hero{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
@@ -347,7 +365,7 @@
     .split-stat-value{font-size:clamp(1.1rem,4vw,1.4rem);font-weight:800;color:var(--green-deep);letter-spacing:-.02em}
     .split-stat-label{font-size:.7rem;color:var(--text-muted);font-weight:500;margin-top:2px}
     .split-list{border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;margin-bottom:16px}
-    .split-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-size:.9rem;border-bottom:1px solid var(--border);gap:8px}
+    .split-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-size:.9rem;border-bottom:1px solid var(--border);gap:8px;animation:splitItemCascade .26s ease backwards}
     .split-item:last-child{border-bottom:none}
     .split-item:nth-child(even){background:var(--bg)}
     .split-item:nth-child(odd){background:var(--surface)}
@@ -1151,8 +1169,10 @@
       lastAmount=amount;lastMDR=single.mdr;lastGST=single.gst;lastTotal=single.total;
       lastSplit=payments;lastMaxPay=maxPay;lastSplitMDR=totalSplitMDR;
 
-      document.getElementById('results-area').classList.add('visible');
-      document.getElementById('results-area').classList.add('animate-in');
+      var resArea=document.getElementById('results-area');
+      resArea.classList.remove('animate-in');
+      void resArea.offsetWidth;
+      resArea.classList.add('visible','animate-in');
 
       var belowEl=document.getElementById('below-threshold');
       var compareEl=document.getElementById('comparison-section');
@@ -1198,7 +1218,13 @@
       } else {
         splitEl.style.display='none';
       }
-      if(window.innerWidth<640)setTimeout(function(){document.getElementById('results-area').scrollIntoView({behavior:'smooth',block:'start'})},60);
+      setTimeout(function(){
+        var target=document.getElementById('results-area');
+        if(target){
+          var topPos=target.getBoundingClientRect().top+window.pageYOffset-20;
+          window.scrollTo({top:Math.max(0,topPos),behavior:'smooth'});
+        }
+      },80);
     }
 
     function renderSplitList(payments,amount,maxPay){
@@ -1209,6 +1235,7 @@
       payments.forEach(function(p,i){
         var isLast=i===payments.length-1&&payments.length>1&&p<maxPay;
         var d=document.createElement('div');d.className='split-item'+(isLast?' split-last':'');d.setAttribute('role','listitem');
+        d.style.animationDelay=(Math.min(i,18)*0.035)+'s';
         d.innerHTML='<span class="split-num">'+String(i+1).padStart(2,'0')+'</span><span class="split-amount">'+fmtINRWhole(p)+'</span>';
         list.appendChild(d);
       });
