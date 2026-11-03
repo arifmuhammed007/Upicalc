@@ -444,8 +444,8 @@
   <!-- ─── ANNOUNCEMENT BAR ────────────────────────────────────────── -->
   <div class="announce-bar" role="banner">
     <div class="container announce-inner">
-      <span class="announce-badge">Current Status</span>
-      <span class="announce-text">Interim Period: 0% MDR continues for all UPI transactions. NPCI has deferred the rollout until post-Diwali; the 0.4% framework on P2M &gt; ₹2,000 remains scheduled with revised dates to follow.</span>
+      <span class="announce-badge">November 2026 Update</span>
+      <span class="announce-text">Post-Diwali Status: 0% MDR continues for all UPI transactions. NPCI has not yet notified the revised rollout date; the 0.4% framework for P2M &gt; ₹2,000 will take effect once the fresh circular is issued.</span>
     </div>
   </div>
 
@@ -504,7 +504,7 @@
           <div class="status-card warn">
             <div class="status-card-label">P2M > ₹2,000</div>
             <div class="status-card-value charge">0.4% MDR</div>
-            <div class="status-card-note">Max ₹300 · Deferred to post-Diwali</div>
+            <div class="status-card-note">Max ₹300 · Rollout date awaited from NPCI</div>
           </div>
         </div>
       </div>
@@ -798,7 +798,7 @@
           <div class="rule-card info">
             <div class="rule-card-label">Small merchants protected</div>
             <div class="rule-card-title">₹0 MDR if turnover ≤ ₹1 lakh/month</div>
-            <div class="rule-card-body">Merchants collecting up to ₹1,00,000/month via static or dynamic QR codes retain <strong>full zero-MDR protection</strong>. Eligibility is determined by the acquiring bank, not by transaction size.</div>
+            <div class="rule-card-body">Merchants collecting up to ₹1,00,000/month via static or dynamic QR codes retain <strong>full zero-MDR protection</strong>. Government beneficiaries under <strong>PM SVANidhi</strong> (street vendors) and <strong>PM Vishwakarma</strong> (artisans) are also completely exempt.</div>
           </div>
           <div class="rule-card">
             <div class="rule-card-label">MDR ecosystem</div>
@@ -885,7 +885,7 @@
         </div>
 
         <div class="info-box success">
-          <strong>Over 95% of UPI merchant transactions are below ₹2,000</strong> or processed by small merchants — meaning they incur ₹0 MDR under the current framework. The splitting strategy is most relevant for larger purchases at qualifying merchants.
+          <strong>Over 96% of all UPI merchant transactions remain completely free</strong> (under ₹2,000 or small merchants) according to official Ministry of Finance (DFS) data. The 0.4% MDR applies only to higher-value commercial retail transactions above ₹2,000.
         </div>
       </div>
     </section>
@@ -1006,7 +1006,7 @@
 
         <details class="faq-item"><summary>What about essential sectors (fuel, railways)?</summary><div class="faq-body">Thin-margin and essential sectors — including Railways/IRCTC, fuel pumps, telecom, utilities, insurance, and agriculture — follow a separate <strong>flat ₹5 MDR</strong> per transaction above ₹2,000, instead of the standard 0.4% rate.</div></details>
 
-        <details class="faq-item"><summary>Does splitting have any practical limits?</summary><div class="faq-body">Yes. Most banks allow 20–50 UPI transactions per day. Very large amounts split into many payments may hit daily limits or trigger anti-fraud locks. Each split also requires entering your UPI PIN. Consider whether the MDR savings justify the extra steps.</div></details>
+        <details class="faq-item"><summary>Does splitting have any practical limits?</summary><div class="faq-body">Yes. Most banks allow 10–20 UPI transactions per day. Very large amounts split into many payments may hit daily bank limits or trigger anti-fraud locks. Each split also requires entering your UPI PIN. Consider whether the MDR savings justify the extra steps.</div></details>
 
         <details class="faq-item"><summary>Can merchants claim GST credit on MDR?</summary><div class="faq-body">Yes. GST-registered merchants can claim <strong>input tax credit (ITC)</strong> on the 18% GST charged on MDR. This effectively reduces the merchant's net MDR cost.</div></details>
 
@@ -1085,7 +1085,7 @@
       special: { label: 'Special sector (Fuel/Rail/Telecom)', mode: 'flat', flatFee: 5, threshold: 2000,
                  notice: '⚠ Special sector flat ₹5 MDR applies to fuel pumps, IRCTC/Railways, telecom, utility bills, insurance and agricultural inputs for transactions above ₹2,000. Verify with your acquiring bank or NPCI circular.' },
       small:   { label: 'Small merchant (≤ ₹1L/month)', mode: 'free', threshold: 2000,
-                 notice: '✓ Small merchants collecting ≤ ₹1 lakh/month via UPI QR codes are exempt from MDR under the zero-MDR protection framework.' },
+                 notice: '✓ Small merchants collecting ≤ ₹1 lakh/month via UPI QR codes (including PM SVANidhi and PM Vishwakarma beneficiaries) are 100% exempt from MDR.' },
       p2p:     { label: 'P2P transfer', mode: 'free', threshold: 999999,
                  notice: '✓ Person-to-person (P2P) transfers are always free regardless of amount — no MDR at any value.' }
     };
